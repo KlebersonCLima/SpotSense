@@ -1,0 +1,10 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Pacotes autorizados a executar scripts de build na instalação
+allowBuilds:
+  supabase: true
+  esbuild: true
+  vue-demi: true
+  "@parcel/watcher": true

@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "Vue.volar",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "denoland.vscode-deno",
+    "platformio.platformio-ide",
+    "editorconfig.editorconfig"
+  ]
+}

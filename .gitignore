@@ -1,0 +1,37 @@
+# Dependências
+node_modules/
+
+# Nuxt
+.nuxt/
+.output/
+.data/
+.nitro/
+.cache/
+dist/
+
+# Ambiente / segredos
+.env
+.env.*
+!.env.example
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+supabase/.env
+
+# PlatformIO / firmware
+firmware/**/.pio/
+firmware/**/include/secrets.h
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

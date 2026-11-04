@@ -1,0 +1,11 @@
+{
+  "deno.enablePaths": ["supabase/functions"],
+  "deno.lint": true,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  }
+}

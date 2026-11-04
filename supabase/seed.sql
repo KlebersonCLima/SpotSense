@@ -1,0 +1,1 @@
+-- Dados iniciais para desenvolvimento local (executado em: pnpm db:reset)
