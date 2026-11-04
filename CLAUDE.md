@@ -28,7 +28,10 @@ Contexto completo do produto: [docs/contexto.md](docs/contexto.md). Arquitetura:
 ### Identidade visual
 - Paleta: `#101010`, `#FFFFFF`, `#C8FF00` (destaque). Nenhuma outra cor dominante.
 - Glassmorphism com os tokens de `apps/web/assets/css/main.css` (`--ss-*`, utilitários `glass` e `glass-strong`). Não usar cores soltas nos componentes.
-- Temas claro e escuro via `useColorMode()` do Nuxt UI (persistência e preferência do SO já configuradas).
+- **Somente tema escuro** (decisão do projeto que substitui o tema claro do documento de contexto). A classe `dark` é fixa no `<html>` e o color-mode do Nuxt UI fica desativado. Não reintroduzir alternância de tema.
+- Botões e campos são quadrados com leve arredondamento (6px, via `--ui-radius`).
+- Estados vazios são minimalistas: ícone e mensagem curta, **sem botão de ação** no lugar da lista.
+- Ícones `lucide` ficam instalados localmente (`@iconify-json/lucide`) para funcionar sem internet na apresentação.
 
 ## Comandos
 - `pnpm dev`: app web.

@@ -9,8 +9,10 @@ const sidebarOpen = ref(false)
     <div class="flex min-w-0 flex-1 flex-col">
       <AppHeader @toggle-sidebar="sidebarOpen = !sidebarOpen" />
 
-      <main class="flex-1 p-4 sm:p-6 lg:p-8">
-        <slot />
+      <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div class="mx-auto w-full max-w-7xl">
+          <slot />
+        </div>
       </main>
     </div>
   </div>

@@ -81,7 +81,7 @@ Visual moderno, tecnológico, minimalista e profissional, de SaaS premium, basea
 
 **Modo claro:** fundo `#FFFFFF`, texto `#101010`, superfícies claras translúcidas, bordas escuras com baixa opacidade, destaques em `#C8FF00`.
 
-**Temas:** alternância acessível na interface, persistência da preferência, respeito à preferência do SO quando não houver escolha salva e prevenção de flash na inicialização. Cores, transparências, superfícies, bordas e sombras centralizadas em variáveis CSS.
+**Temas:** ~~alternância entre claro e escuro~~. **Decisão posterior: a aplicação usa somente o tema escuro.** O modo claro acima fica apenas como referência histórica. Cores, transparências, superfícies, bordas e sombras ficam centralizadas em variáveis CSS.
 
 ## 7. Interface
 

@@ -14,7 +14,8 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      htmlAttrs: { lang: 'pt-BR' },
+      // Aplicação somente no tema escuro (classe fixa, sem script de troca e sem flash)
+      htmlAttrs: { lang: 'pt-BR', class: 'dark' },
       title: 'SpotSense',
       meta: [
         { name: 'description', content: 'Gerenciamento inteligente de estacionamentos com IoT.' },
@@ -23,14 +24,12 @@ export default defineNuxtConfig({
     },
   },
 
-  // Tema claro/escuro: segue o SO, persiste a escolha e evita flash na inicialização
-  colorMode: {
-    preference: 'system',
-    fallback: 'dark',
-    storageKey: 'spotsense-color-mode',
+  // Tema único (escuro): desativa o módulo de alternância de cor do Nuxt UI
+  ui: {
+    colorMode: false,
   },
 
-  // Usa SUPABASE_URL e SUPABASE_KEY (chave pública/anon) do .env
+  // Usa NUXT_PUBLIC_SUPABASE_URL e NUXT_PUBLIC_SUPABASE_KEY (chave pública) do .env
   supabase: {
     types: fileURLToPath(new URL('../../packages/shared/src/database.types.ts', import.meta.url)),
     redirectOptions: {

@@ -114,6 +114,32 @@ O app fica disponível em http://localhost:3000.
 | `pnpm db:types` | Gera `packages/shared/src/database.types.ts` a partir do banco |
 | `pnpm functions:serve` | Executa as Edge Functions localmente |
 
+## Integração IoT
+
+1. No painel do estacionamento, aba **Gerenciar vagas**, defina a vaga como **Física (IoT)** e clique em **Vincular dispositivo**.
+2. Copie o endpoint, o identificador e o token. O token só é exibido uma vez.
+3. Rode as Edge Functions localmente com `pnpm functions:serve`.
+
+O ESP32 envia o estado da vaga assim (dá para simular com `curl`, sem a placa):
+
+```bash
+curl -X POST http://127.0.0.1:54321/functions/v1/iot-spot-status \
+  -H "x-device-id: esp32-vaga-50" \
+  -H "x-device-token: <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"occupied"}'   # ou "available"
+```
+
+| Resposta | Significado |
+| --- | --- |
+| `200 { ok, spot_number, status, changed }` | Estado registrado |
+| `400 invalid_status` / `invalid_json` | Corpo inválido |
+| `401 unauthorized` / `missing_credentials` | Identificador ou token incorretos |
+| `403 device_inactive` | Dispositivo desativado no painel |
+| `409 spot_not_physical` | A vaga vinculada não é física |
+
+O mapa atualiza em tempo real e a mudança aparece no feed de atividade como **Sensor IoT**.
+
 ## Firmware (ESP32)
 
 Veja [firmware/esp32/README.md](firmware/esp32/README.md).
@@ -133,11 +159,11 @@ Padrão de nomenclatura: tabelas com prefixo **`tbl`** + nome em português, **s
 
 | Cor | Uso |
 | --- | --- |
-| `#101010` | Preto profundo: fundo do modo escuro e texto do modo claro |
-| `#FFFFFF` | Branco: fundo do modo claro e texto do modo escuro |
+| `#101010` | Preto profundo: fundo da aplicação |
+| `#FFFFFF` | Branco: textos |
 | `#C8FF00` | Verde-limão neon: destaques e elementos interativos |
 
-Interface em **Glassmorphism**, com modos claro e escuro (segue o sistema operacional, guarda a preferência e não pisca na inicialização). Os tokens ficam em [apps/web/assets/css/main.css](apps/web/assets/css/main.css).
+Interface em **Glassmorphism**, somente no **tema escuro**. Os tokens ficam em [apps/web/assets/css/main.css](apps/web/assets/css/main.css).
 
 ## Segurança
 

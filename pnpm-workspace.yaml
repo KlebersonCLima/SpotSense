@@ -8,3 +8,13 @@ allowBuilds:
   esbuild: true
   vue-demi: true
   "@parcel/watcher": true
+
+# Estes módulos usam "h3" sem declará-lo; sem isso o pnpm resolve para o h3 v2
+# (trazido pelo @nuxt/eslint), incompatível com o Nuxt 3 (h3 v1).
+packageExtensions:
+  "@nuxtjs/supabase":
+    dependencies:
+      h3: "^1.15.0"
+  "@nuxt/icon":
+    dependencies:
+      h3: "^1.15.0"

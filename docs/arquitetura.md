@@ -54,6 +54,6 @@ Os componentes são registrados sem prefixo de pasta (`pathPrefix: false`), ent�
 ## Design system
 
 - Tokens em `apps/web/assets/css/main.css`: `--ss-bg`, `--ss-text`, `--ss-accent`, `--ss-glass-*`, `--ss-radius-*`.
-- `.dark` sobrescreve os tokens no modo escuro, e o Nuxt UI usa a escala `neon` como `primary`.
+- Tema único escuro: a classe `dark` é fixa no `<html>` (`nuxt.config.ts`) e o color-mode do Nuxt UI está desativado, então não há script de troca nem flash.
+- O Nuxt UI usa a escala `neon` como `primary`; botões e campos têm 6px de arredondamento (`--ui-radius`).
 - Utilitários Tailwind: `glass` (superfícies padrão) e `glass-strong` (modais e menus).
-- Tema gerenciado pelo `@nuxtjs/color-mode` (incluído no Nuxt UI): preferência do SO, persistência em `localStorage` (`spotsense-color-mode`) e script anti-flash no `<head>`.

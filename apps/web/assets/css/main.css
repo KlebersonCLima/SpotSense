@@ -23,55 +23,43 @@
   --color-neon-950: #1a2200;
 }
 
-/* ---------- Tokens base (modo claro) ---------- */
-:root {
+/* ---------- Tokens (tema único: escuro) ---------- */
+:root,
+.dark {
+  color-scheme: dark;
+
   --ss-black: #101010;
   --ss-white: #ffffff;
   --ss-neon: #c8ff00;
 
-  --ss-bg: var(--ss-white);
-  --ss-text: var(--ss-black);
-  --ss-text-muted: rgb(16 16 16 / 0.6);
-
-  --ss-accent: var(--ss-neon);
-  --ss-accent-ink: var(--ss-black); /* texto sobre o neon */
-  --ss-accent-soft: rgb(200 255 0 / 0.18);
-
-  /* Glass */
-  --ss-glass-bg: rgb(255 255 255 / 0.6);
-  --ss-glass-bg-strong: rgb(255 255 255 / 0.8);
-  --ss-glass-border: rgb(16 16 16 / 0.08);
-  --ss-glass-highlight: linear-gradient(135deg, rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.2));
-  --ss-glass-blur: 16px;
-  --ss-glass-shadow: 0 8px 32px rgb(16 16 16 / 0.08);
-
-  /* Forma e movimento */
-  --ss-radius-sm: 0.5rem;
-  --ss-radius-md: 0.875rem;
-  --ss-radius-lg: 1.25rem;
-  --ss-transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Integração com Nuxt UI */
-  --ui-primary: var(--ss-accent);
-  --ui-bg: var(--ss-bg);
-  --ui-text: var(--ss-text);
-  --ui-text-highlighted: var(--ss-text);
-  --ui-radius: var(--ss-radius-sm);
-}
-
-/* ---------- Modo escuro ---------- */
-.dark {
   --ss-bg: var(--ss-black);
   --ss-text: var(--ss-white);
   --ss-text-muted: rgb(255 255 255 / 0.6);
 
+  --ss-accent: var(--ss-neon);
+  --ss-accent-ink: var(--ss-black); /* texto sobre o neon */
   --ss-accent-soft: rgb(200 255 0 / 0.12);
 
+  /* Glass */
   --ss-glass-bg: rgb(24 24 24 / 0.55);
   --ss-glass-bg-strong: rgb(24 24 24 / 0.8);
   --ss-glass-border: rgb(255 255 255 / 0.08);
   --ss-glass-highlight: linear-gradient(135deg, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.01));
+  --ss-glass-blur: 16px;
   --ss-glass-shadow: 0 8px 32px rgb(0 0 0 / 0.45);
+
+  /* Forma e movimento */
+  --ss-radius-sm: 0.375rem; /* botões e campos: quadrados com leve arredondamento */
+  --ss-radius-md: 0.625rem;
+  --ss-radius-lg: 0.875rem; /* cards e painéis */
+  --ss-transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Integração com Nuxt UI (rounded-md do Nuxt UI = --ui-radius × 1.5 = 6px) */
+  --ui-primary: var(--ss-accent);
+  --ui-bg: var(--ss-bg);
+  --ui-text: var(--ss-text);
+  --ui-text-highlighted: var(--ss-text);
+  --ui-radius: 0.25rem;
 }
 
 /* ---------- Utilitários ---------- */
@@ -102,8 +90,26 @@ body {
   background-attachment: fixed;
 }
 
+/* Destaque quando uma vaga muda de estado em tempo real */
+@keyframes spot-flash {
+  0% {
+    box-shadow: inset 0 0 28px rgb(200 255 0 / 0.55), 0 0 0 0 rgb(200 255 0 / 0.8);
+  }
+  100% {
+    box-shadow: inset 0 0 0 rgb(200 255 0 / 0), 0 0 0 12px rgb(200 255 0 / 0);
+  }
+}
+
+.spot-flash {
+  animation: spot-flash 1.6s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     --ss-transition: 0ms;
+  }
+
+  .spot-flash {
+    animation: none;
   }
 }
