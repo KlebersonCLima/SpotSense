@@ -13,7 +13,7 @@ if (!lot.value) {
   throw createError({ statusCode: 404, statusMessage: 'Estacionamento não encontrado', fatal: true })
 }
 
-useSeoMeta({ title: () => `${lot.value?.name ?? 'Estacionamento'} · SpotSense` })
+useSeoMeta({ title: () => `${lot.value?.nome ?? 'Estacionamento'} · SpotSense` })
 
 // Somente no cliente: exibe horários relativos ("há 2 min"), que mudariam entre SSR e hidratação
 const { data: history, refresh: refreshHistory } = useAsyncData(
@@ -63,8 +63,8 @@ const saving = ref(false)
 async function onEdit(data: NewParkingLotInput) {
   saving.value = true
   try {
-    const { name, address, description, is_active } = data
-    await parkingLots.update(parkingLotId, { name, address, description, is_active })
+    const { nome, endereco, descricao, ativo } = data
+    await parkingLots.update(parkingLotId, { nome, endereco, descricao, ativo })
     await refreshLot()
     formOpen.value = false
     toast.add({ title: 'Estacionamento atualizado', icon: 'i-lucide-check-circle-2', color: 'success' })
@@ -112,20 +112,20 @@ function openDevice(spot: ParkingSpot) {
 
 <template>
   <section v-if="lot" class="space-y-6">
-    <PageHeader :title="lot.name" :description="lot.description ?? undefined">
+    <PageHeader :title="lot.nome" :description="lot.descricao ?? undefined">
       <template #eyebrow>
         <div class="flex flex-wrap items-center gap-2 text-sm">
           <NuxtLink to="/parking-lots" class="flex items-center gap-1 text-[var(--ss-text-muted)] hover:text-[var(--ss-text)]">
             <UIcon name="i-lucide-arrow-left" class="size-4" /> Estacionamentos
           </NuxtLink>
           <UBadge
-            :color="lot.is_active ? 'primary' : 'neutral'"
+            :color="lot.ativo ? 'primary' : 'neutral'"
             variant="subtle"
             size="sm"
-            :label="lot.is_active ? 'Ativo' : 'Inativo'"
+            :label="lot.ativo ? 'Ativo' : 'Inativo'"
           />
-          <span v-if="lot.address" class="flex items-center gap-1 text-[var(--ss-text-muted)]">
-            <UIcon name="i-lucide-map-pin" class="size-3.5" /> {{ lot.address }}
+          <span v-if="lot.endereco" class="flex items-center gap-1 text-[var(--ss-text-muted)]">
+            <UIcon name="i-lucide-map-pin" class="size-3.5" /> {{ lot.endereco }}
           </span>
         </div>
       </template>
@@ -148,7 +148,7 @@ function openDevice(spot: ParkingSpot) {
           icon="i-lucide-grid-2x2-plus"
           title="Nenhuma vaga cadastrada"
         />
-        <div v-else class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
+        <div v-else class="grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
           <ParkingMap :spots="spots" :devices="devices" :recently-changed="recentlyChanged" @toggle="toggleStatus" />
           <SpotActivityFeed :entries="history" />
         </div>
@@ -173,7 +173,7 @@ function openDevice(spot: ParkingSpot) {
 
     <ConfirmModal
       v-model:open="confirmOpen"
-      :title="`Excluir vaga ${spotToDelete?.spot_number ?? ''}?`"
+      :title="`Excluir vaga ${spotToDelete?.numero ?? ''}?`"
       description="O histórico e o dispositivo IoT vinculados a esta vaga também serão excluídos."
       @confirm="confirmRemoveSpot"
     />

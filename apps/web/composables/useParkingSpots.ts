@@ -26,7 +26,7 @@ export function useParkingSpots(parkingLotId: string, options: { onRealtimeChang
 
   function upsert(spot: ParkingSpot) {
     const index = spots.value.findIndex(item => item.id === spot.id)
-    if (index === -1) spots.value = [...spots.value, spot].sort((a, b) => a.spot_number - b.spot_number)
+    if (index === -1) spots.value = [...spots.value, spot].sort((a, b) => a.numero - b.numero)
     else spots.value.splice(index, 1, spot)
   }
 
@@ -39,14 +39,14 @@ export function useParkingSpots(parkingLotId: string, options: { onRealtimeChang
       else {
         const previous = spots.value.find(spot => spot.id === payload.new.id)
         upsert(payload.new)
-        if (previous && previous.status !== payload.new.status) flash(payload.new.id)
+        if (previous && previous.situacao !== payload.new.situacao) flash(payload.new.id)
       }
       options.onRealtimeChange?.()
     },
   })
 
   const stats = computed(() => summarizeSpots(spots.value))
-  const nextSpotNumber = computed(() => Math.max(0, ...spots.value.map(spot => spot.spot_number)) + 1)
+  const nextSpotNumber = computed(() => Math.max(0, ...spots.value.map(spot => spot.numero)) + 1)
 
   function notifyError(error: unknown) {
     toast.add({ title: 'Não foi possível concluir', description: getErrorMessage(error), icon: 'i-lucide-circle-alert', color: 'error' })
@@ -54,18 +54,18 @@ export function useParkingSpots(parkingLotId: string, options: { onRealtimeChang
 
   /** Alterna o estado de uma vaga simulada (atualização otimista). */
   async function toggleStatus(spot: ParkingSpot) {
-    if (spot.type === 'physical') {
+    if (spot.tipo === 'fisica') {
       toast.add({
-        title: `Vaga ${spot.spot_number} é física`,
+        title: `Vaga ${spot.numero} é física`,
         description: 'O estado dela é definido apenas pelo sensor IoT.',
         icon: 'i-lucide-radio',
       })
       return
     }
     const previous = { ...spot }
-    upsert({ ...spot, status: spot.status === 'occupied' ? 'available' : 'occupied' })
+    upsert({ ...spot, situacao: spot.situacao === 'ocupada' ? 'livre' : 'ocupada' })
     try {
-      upsert(await service.setStatus(spot.id, spot.status === 'occupied' ? 'available' : 'occupied'))
+      upsert(await service.setStatus(spot.id, spot.situacao === 'ocupada' ? 'livre' : 'ocupada'))
     }
     catch (error) {
       upsert(previous)
@@ -99,7 +99,7 @@ export function useParkingSpots(parkingLotId: string, options: { onRealtimeChang
     try {
       await service.remove(spot.id)
       spots.value = spots.value.filter(item => item.id !== spot.id)
-      toast.add({ title: `Vaga ${spot.spot_number} excluída`, icon: 'i-lucide-trash-2' })
+      toast.add({ title: `Vaga ${spot.numero} excluída`, icon: 'i-lucide-trash-2' })
     }
     catch (error) {
       notifyError(error)

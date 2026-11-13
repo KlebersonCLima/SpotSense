@@ -3,7 +3,7 @@ useSeoMeta({ title: 'Dashboard · SpotSense' })
 
 const { lots, status } = useParkingLots()
 
-const activeLots = computed(() => lots.value.filter(lot => lot.is_active))
+const activeLots = computed(() => lots.value.filter(lot => lot.ativo))
 const stats = computed(() => summarizeSpots(activeLots.value.flatMap(lot => lot.spots)))
 </script>
 

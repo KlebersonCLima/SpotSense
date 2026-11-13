@@ -24,18 +24,18 @@ defineProps<{
       <li v-for="entry in entries" :key="entry.id" class="flex items-start gap-3 text-sm">
         <span
           class="mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg"
-          :class="entry.source === 'iot' ? 'bg-[var(--ss-neon)] text-[var(--ss-black)]' : 'bg-[var(--ss-glass-border)]'"
-          :title="entry.source === 'iot' ? 'Sensor IoT' : 'Manual'"
+          :class="entry.origem === 'sensor' ? 'bg-[var(--ss-neon)] text-[var(--ss-black)]' : 'bg-[var(--ss-glass-border)]'"
+          :title="entry.origem === 'sensor' ? 'Sensor IoT' : 'Manual'"
         >
-          <UIcon :name="entry.source === 'iot' ? 'i-lucide-radio' : 'i-lucide-mouse-pointer-click'" class="size-4" />
+          <UIcon :name="entry.origem === 'sensor' ? 'i-lucide-radio' : 'i-lucide-mouse-pointer-click'" class="size-4" />
         </span>
         <div class="min-w-0">
           <p>
-            Vaga <strong class="font-mono">{{ String(entry.spot.spot_number).padStart(2, '0') }}</strong>
-            ficou <strong>{{ entry.new_status === 'occupied' ? 'ocupada' : 'disponível' }}</strong>
+            Vaga <strong class="font-mono">{{ String(entry.spot.numero).padStart(2, '0') }}</strong>
+            ficou <strong>{{ entry.situacao_nova === 'ocupada' ? 'ocupada' : 'disponível' }}</strong>
           </p>
           <p class="text-xs text-[var(--ss-text-muted)]">
-            {{ entry.source === 'iot' ? 'Sensor IoT' : 'Manual' }} · {{ formatRelativeTime(entry.created_at) }}
+            {{ entry.origem === 'sensor' ? 'Sensor IoT' : 'Manual' }} · {{ formatRelativeTime(entry.criado_em) }}
           </p>
         </div>
       </li>

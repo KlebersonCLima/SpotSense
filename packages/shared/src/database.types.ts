@@ -26,19 +26,19 @@ export type Database = {
           Tables: {
             "tbldispositivosiot": {
                   Row: {
-                    "created_at": string,"device_identifier": string,"device_token_hash": string,"id": string,"is_active": boolean,"last_seen_at": string | null,"parking_spot_id": string,"updated_at": string
+                    "ativo": boolean,"atualizado_em": string,"criado_em": string,"id": string,"identificador": string,"token_hash": string,"ultimo_contato_em": string | null,"vaga_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"device_identifier": string,"device_token_hash": string,"id"?: string,"is_active"?: boolean,"last_seen_at"?: string | null,"parking_spot_id": string,"updated_at"?: string
+                    "ativo"?: boolean,"atualizado_em"?: string,"criado_em"?: string,"id"?: string,"identificador": string,"token_hash": string,"ultimo_contato_em"?: string | null,"vaga_id": string
                   }
                   Update: {
-                    "created_at"?: string,"device_identifier"?: string,"device_token_hash"?: string,"id"?: string,"is_active"?: boolean,"last_seen_at"?: string | null,"parking_spot_id"?: string,"updated_at"?: string
+                    "ativo"?: boolean,"atualizado_em"?: string,"criado_em"?: string,"id"?: string,"identificador"?: string,"token_hash"?: string,"ultimo_contato_em"?: string | null,"vaga_id"?: string
                   }
                   Relationships: [
                     {
-      foreignKeyName: "tbldispositivosiot_parking_spot_id_fkey"
-      columns: ["parking_spot_id"]
+      foreignKeyName: "tbldispositivosiot_vaga_id_fkey"
+      columns: ["vaga_id"]
 isOneToOne: true
       referencedRelation: "tblvagas"
       referencedColumns: ["id"]
@@ -46,33 +46,33 @@ isOneToOne: true
                   ]
                 },"tblestacionamentos": {
                   Row: {
-                    "address": string | null,"created_at": string,"description": string | null,"id": string,"is_active": boolean,"name": string,"owner_id": string,"updated_at": string
+                    "ativo": boolean,"atualizado_em": string,"criado_em": string,"descricao": string | null,"dono_id": string,"endereco": string | null,"id": string,"nome": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "address"?: string | null,"created_at"?: string,"description"?: string | null,"id"?: string,"is_active"?: boolean,"name": string,"owner_id"?: string,"updated_at"?: string
+                    "ativo"?: boolean,"atualizado_em"?: string,"criado_em"?: string,"descricao"?: string | null,"dono_id"?: string,"endereco"?: string | null,"id"?: string,"nome": string
                   }
                   Update: {
-                    "address"?: string | null,"created_at"?: string,"description"?: string | null,"id"?: string,"is_active"?: boolean,"name"?: string,"owner_id"?: string,"updated_at"?: string
+                    "ativo"?: boolean,"atualizado_em"?: string,"criado_em"?: string,"descricao"?: string | null,"dono_id"?: string,"endereco"?: string | null,"id"?: string,"nome"?: string
                   }
                   Relationships: [
                     
                   ]
                 },"tblhistoricovagas": {
                   Row: {
-                    "changed_by": string | null,"created_at": string,"id": number,"new_status": string,"parking_spot_id": string,"previous_status": string | null,"source": string
+                    "alterado_por": string | null,"criado_em": string,"id": number,"origem": string,"situacao_anterior": string | null,"situacao_nova": string,"vaga_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "changed_by"?: string | null,"created_at"?: string,"id"?: never,"new_status": string,"parking_spot_id": string,"previous_status"?: string | null,"source": string
+                    "alterado_por"?: string | null,"criado_em"?: string,"id"?: never,"origem": string,"situacao_anterior"?: string | null,"situacao_nova": string,"vaga_id": string
                   }
                   Update: {
-                    "changed_by"?: string | null,"created_at"?: string,"id"?: never,"new_status"?: string,"parking_spot_id"?: string,"previous_status"?: string | null,"source"?: string
+                    "alterado_por"?: string | null,"criado_em"?: string,"id"?: never,"origem"?: string,"situacao_anterior"?: string | null,"situacao_nova"?: string,"vaga_id"?: string
                   }
                   Relationships: [
                     {
-      foreignKeyName: "tblhistoricovagas_parking_spot_id_fkey"
-      columns: ["parking_spot_id"]
+      foreignKeyName: "tblhistoricovagas_vaga_id_fkey"
+      columns: ["vaga_id"]
 isOneToOne: false
       referencedRelation: "tblvagas"
       referencedColumns: ["id"]
@@ -80,19 +80,19 @@ isOneToOne: false
                   ]
                 },"tblvagas": {
                   Row: {
-                    "created_at": string,"id": string,"last_updated_at": string,"parking_lot_id": string,"spot_number": number,"status": string,"type": string,"updated_at": string
+                    "atualizado_em": string,"criado_em": string,"estacionamento_id": string,"id": string,"numero": number,"situacao": string,"situacao_atualizada_em": string,"tipo": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"id"?: string,"last_updated_at"?: string,"parking_lot_id": string,"spot_number": number,"status"?: string,"type"?: string,"updated_at"?: string
+                    "atualizado_em"?: string,"criado_em"?: string,"estacionamento_id": string,"id"?: string,"numero": number,"situacao"?: string,"situacao_atualizada_em"?: string,"tipo"?: string
                   }
                   Update: {
-                    "created_at"?: string,"id"?: string,"last_updated_at"?: string,"parking_lot_id"?: string,"spot_number"?: number,"status"?: string,"type"?: string,"updated_at"?: string
+                    "atualizado_em"?: string,"criado_em"?: string,"estacionamento_id"?: string,"id"?: string,"numero"?: number,"situacao"?: string,"situacao_atualizada_em"?: string,"tipo"?: string
                   }
                   Relationships: [
                     {
-      foreignKeyName: "tblvagas_parking_lot_id_fkey"
-      columns: ["parking_lot_id"]
+      foreignKeyName: "tblvagas_estacionamento_id_fkey"
+      columns: ["estacionamento_id"]
 isOneToOne: false
       referencedRelation: "tblestacionamentos"
       referencedColumns: ["id"]
@@ -104,11 +104,11 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "is_parking_lot_owner":
-{ Args: { "p_parking_lot_id": string }; Returns: boolean
+            "eh_dono_estacionamento":
+{ Args: { "p_estacionamento_id": string }; Returns: boolean
                            },
-"register_iot_device":
-{ Args: { "p_device_identifier": string,"p_parking_spot_id": string }; Returns: Json
+"registrar_dispositivo_iot":
+{ Args: { "p_identificador": string,"p_vaga_id": string }; Returns: Json
                            }
           }
           Enums: {

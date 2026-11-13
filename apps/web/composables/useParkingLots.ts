@@ -28,7 +28,7 @@ export function useParkingLots() {
       }
       for (const lot of lots.value) {
         const spot = lot.spots.find(item => item.id === payload.new.id)
-        if (spot) Object.assign(spot, { status: payload.new.status, type: payload.new.type })
+        if (spot) Object.assign(spot, { situacao: payload.new.situacao, tipo: payload.new.tipo })
       }
     },
   })
@@ -54,7 +54,7 @@ export function useParkingLots() {
     create: (input: NewParkingLotInput) => run(() => parkingLots.create(input), 'Estacionamento criado'),
     update: (id: string, input: Partial<ParkingLotInput>) => run(() => parkingLots.update(id, input), 'Estacionamento atualizado'),
     setActive: (id: string, isActive: boolean) =>
-      run(() => parkingLots.update(id, { is_active: isActive }), isActive ? 'Estacionamento ativado' : 'Estacionamento desativado'),
+      run(() => parkingLots.update(id, { ativo: isActive }), isActive ? 'Estacionamento ativado' : 'Estacionamento desativado'),
     remove: (id: string) => run(() => parkingLots.remove(id), 'Estacionamento excluído'),
   }
 }

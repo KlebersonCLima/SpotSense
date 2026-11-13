@@ -17,12 +17,12 @@ const emit = defineEmits<{
 }>()
 
 const typeItems = [
-  { label: 'Simulada', value: 'simulated' },
-  { label: 'Física (IoT)', value: 'physical' },
+  { label: 'Simulada', value: 'simulada' },
+  { label: 'Física (IoT)', value: 'fisica' },
 ]
 
 const newCount = ref<number | null>(1)
-const newType = ref<SpotType>('simulated')
+const newType = ref<SpotType>('simulada')
 
 const count = computed(() => Math.min(200, Math.max(1, Math.floor(newCount.value ?? 1))))
 const numberingHint = computed(() =>
@@ -75,13 +75,13 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
           class="grid grid-cols-[3rem_minmax(0,1fr)_2.25rem] items-center gap-x-3 gap-y-2 px-4 py-3 md:gap-x-4"
           :class="GRID"
         >
-          <span class="font-mono text-lg font-semibold md:order-1">{{ String(spot.spot_number).padStart(2, '0') }}</span>
+          <span class="font-mono text-lg font-semibold md:order-1">{{ String(spot.numero).padStart(2, '0') }}</span>
 
           <USelect
-            :model-value="spot.type"
+            :model-value="spot.tipo"
             :items="typeItems"
             class="w-full md:order-2"
-            :aria-label="`Tipo da vaga ${spot.spot_number}`"
+            :aria-label="`Tipo da vaga ${spot.numero}`"
             @update:model-value="(value) => emit('setType', spot, value as SpotType)"
           />
 
@@ -90,17 +90,17 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
             color="neutral"
             variant="ghost"
             class="justify-self-end md:order-5"
-            :aria-label="`Excluir vaga ${spot.spot_number}`"
+            :aria-label="`Excluir vaga ${spot.numero}`"
             @click="emit('remove', spot)"
           />
 
           <UButton
-            :color="spot.status === 'occupied' ? 'neutral' : 'primary'"
-            :variant="spot.status === 'occupied' ? 'solid' : 'soft'"
-            :icon="spot.type === 'physical' ? 'i-lucide-lock' : 'i-lucide-repeat'"
-            :label="SPOT_STATUS_LABEL[spot.status]"
-            :disabled="spot.type === 'physical'"
-            :title="spot.type === 'physical' ? 'Controlada pelo sensor IoT' : 'Alternar status'"
+            :color="spot.situacao === 'ocupada' ? 'neutral' : 'primary'"
+            :variant="spot.situacao === 'ocupada' ? 'solid' : 'soft'"
+            :icon="spot.tipo === 'fisica' ? 'i-lucide-lock' : 'i-lucide-repeat'"
+            :label="SPOT_STATUS_LABEL[spot.situacao]"
+            :disabled="spot.tipo === 'fisica'"
+            :title="spot.tipo === 'fisica' ? 'Controlada pelo sensor IoT' : 'Alternar status'"
             block
             class="col-span-2 col-start-2 md:order-3 md:col-span-1 md:col-start-auto"
             @click="emit('toggle', spot)"
@@ -108,10 +108,10 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
 
           <div
             class="col-span-2 col-start-2 min-w-0 text-sm md:order-4 md:col-span-1 md:col-start-auto"
-            :class="spot.type !== 'physical' && 'hidden md:block'"
+            :class="spot.tipo !== 'fisica' && 'hidden md:block'"
           >
             <button
-              v-if="spot.type === 'physical'"
+              v-if="spot.tipo === 'fisica'"
               type="button"
               class="flex w-full min-w-0 items-center gap-2 rounded-[var(--ss-radius-sm)] px-2 py-1.5 text-left transition-colors hover:bg-[var(--ss-glass-border)]"
               @click="emit('manageDevice', spot)"
@@ -119,11 +119,11 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
               <UIcon
                 name="i-lucide-cpu"
                 class="size-4 shrink-0"
-                :class="devices.get(spot.id)?.is_active ? 'text-[var(--ss-neon)]' : 'text-[var(--ss-text-muted)]'"
+                :class="devices.get(spot.id)?.ativo ? 'text-[var(--ss-neon)]' : 'text-[var(--ss-text-muted)]'"
               />
               <span v-if="devices.get(spot.id)" class="truncate">
-                {{ devices.get(spot.id)!.device_identifier }}
-                <span class="text-[var(--ss-text-muted)]">· {{ formatRelativeTime(devices.get(spot.id)!.last_seen_at) }}</span>
+                {{ devices.get(spot.id)!.identificador }}
+                <span class="text-[var(--ss-text-muted)]">· {{ formatRelativeTime(devices.get(spot.id)!.ultimo_contato_em) }}</span>
               </span>
               <span v-else class="truncate text-[var(--ss-text-muted)] underline underline-offset-4">Vincular dispositivo</span>
             </button>

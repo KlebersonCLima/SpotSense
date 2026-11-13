@@ -9,10 +9,10 @@ export interface SpotStats {
   occupancyRate: number
 }
 
-export function summarizeSpots(spots: ReadonlyArray<{ status: SpotStatus | string, type: SpotType | string }>): SpotStats {
+export function summarizeSpots(spots: ReadonlyArray<{ situacao: SpotStatus | string, tipo: SpotType | string }>): SpotStats {
   const total = spots.length
-  const occupied = spots.filter(spot => spot.status === 'occupied').length
-  const physical = spots.filter(spot => spot.type === 'physical').length
+  const occupied = spots.filter(spot => spot.situacao === 'ocupada').length
+  const physical = spots.filter(spot => spot.tipo === 'fisica').length
   return {
     total,
     occupied,
@@ -23,11 +23,11 @@ export function summarizeSpots(spots: ReadonlyArray<{ status: SpotStatus | strin
 }
 
 export const SPOT_STATUS_LABEL: Record<SpotStatus, string> = {
-  available: 'Disponível',
-  occupied: 'Ocupada',
+  livre: 'Disponível',
+  ocupada: 'Ocupada',
 }
 
 export const SPOT_TYPE_LABEL: Record<SpotType, string> = {
-  simulated: 'Simulada',
-  physical: 'Física (IoT)',
+  simulada: 'Simulada',
+  fisica: 'Física (IoT)',
 }

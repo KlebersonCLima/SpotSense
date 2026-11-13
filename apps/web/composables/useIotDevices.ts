@@ -12,7 +12,7 @@ export function useIotDevices(parkingLotId: string) {
     { default: () => [] as IotDevice[], server: false },
   )
 
-  const bySpotId = computed(() => new Map(devices.value.map(device => [device.parking_spot_id, device])))
+  const bySpotId = computed(() => new Map(devices.value.map(device => [device.vaga_id, device])))
 
   function notifyError(error: unknown) {
     toast.add({ title: 'Não foi possível concluir', description: getErrorMessage(error), icon: 'i-lucide-circle-alert', color: 'error' })

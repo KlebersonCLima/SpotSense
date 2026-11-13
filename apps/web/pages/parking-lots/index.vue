@@ -11,8 +11,8 @@ const search = ref('')
 
 const counts = computed(() => ({
   all: lots.value.length,
-  active: lots.value.filter(lot => lot.is_active).length,
-  inactive: lots.value.filter(lot => !lot.is_active).length,
+  active: lots.value.filter(lot => lot.ativo).length,
+  inactive: lots.value.filter(lot => !lot.ativo).length,
 }))
 
 const tabs = computed(() => [
@@ -24,10 +24,10 @@ const tabs = computed(() => [
 const filteredLots = computed(() => {
   const term = search.value.trim().toLowerCase()
   return lots.value.filter((lot) => {
-    if (filter.value === 'active' && !lot.is_active) return false
-    if (filter.value === 'inactive' && lot.is_active) return false
+    if (filter.value === 'active' && !lot.ativo) return false
+    if (filter.value === 'inactive' && lot.ativo) return false
     if (!term) return true
-    return [lot.name, lot.address, lot.description].some(value => value?.toLowerCase().includes(term))
+    return [lot.nome, lot.endereco, lot.descricao].some(value => value?.toLowerCase().includes(term))
   })
 })
 
@@ -49,8 +49,8 @@ function openEdit(lot: ParkingLotWithSpots) {
 async function onSubmit(data: NewParkingLotInput) {
   saving.value = true
   if (editingLot.value) {
-    const { name, address, description, is_active } = data
-    const updated = await update(editingLot.value.id, { name, address, description, is_active })
+    const { nome, endereco, descricao, ativo } = data
+    const updated = await update(editingLot.value.id, { nome, endereco, descricao, ativo })
     if (updated) formOpen.value = false
   }
   else {
@@ -117,7 +117,7 @@ async function confirmRemove() {
         :key="lot.id"
         :lot="lot"
         @edit="openEdit"
-        @toggle-active="setActive($event.id, !$event.is_active)"
+        @toggle-active="setActive($event.id, !$event.ativo)"
         @remove="askRemove"
       />
     </TransitionGroup>
@@ -126,7 +126,7 @@ async function confirmRemove() {
 
     <ConfirmModal
       v-model:open="confirmOpen"
-      :title="`Excluir ${lotToDelete?.name ?? 'estacionamento'}?`"
+      :title="`Excluir ${lotToDelete?.nome ?? 'estacionamento'}?`"
       description="Todas as vagas, dispositivos IoT e o histórico deste estacionamento serão excluídos. Essa ação não pode ser desfeita."
       :loading="deleting"
       @confirm="confirmRemove"

@@ -10,7 +10,7 @@ export function getErrorMessage(error: unknown, fallback = 'Algo deu errado. Ten
   const { message, code, hint } = error as DatabaseErrorLike
 
   // Exceções lançadas pelas nossas funções/triggers já vêm com mensagem em português
-  if (hint === 'physical_spot_locked' || code === 'P0001' || code === 'P0002') return message ?? fallback
+  if (hint === 'vaga_fisica_bloqueada' || code === 'P0001' || code === 'P0002') return message ?? fallback
   if (code === '23505') {
     return message?.startsWith('Já existe') ? message : 'Já existe um registro com esses dados (ex.: número de vaga repetido).'
   }

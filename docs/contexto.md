@@ -62,10 +62,10 @@ Considerar autenticação do dispositivo, validação de dados e tratamento de e
 
 | Conceito (original) | Tabela | Campos conceituais |
 | --- | --- | --- |
-| parking_lots | `tblestacionamentos` | id, name, description, address, created_at, updated_at |
-| parking_spots | `tblvagas` | id, parking_lot_id, spot_number, type (simulated/physical), status (available/occupied), last_updated_at, created_at, updated_at |
-| iot_devices | `tbldispositivosiot` | id, parking_spot_id, device_identifier, device_token_hash, last_seen_at, is_active, created_at, updated_at |
-| histórico (a avaliar) | `tblhistoricovagas` | mudança de estado da vaga, data/hora e origem (interface ou IoT) |
+| parking_lots | `tblestacionamentos` | id, dono_id, nome, descricao, endereco, ativo, criado_em, atualizado_em |
+| parking_spots | `tblvagas` | id, estacionamento_id, numero, tipo (simulada/fisica), situacao (livre/ocupada), situacao_atualizada_em, criado_em, atualizado_em |
+| iot_devices | `tbldispositivosiot` | id, vaga_id, identificador, token_hash, ultimo_contato_em, ativo, criado_em, atualizado_em |
+| histórico | `tblhistoricovagas` | id, vaga_id, situacao_anterior, situacao_nova, origem (manual/sensor), alterado_por, criado_em |
 
 Implementar relacionamentos, índices, validações e políticas de segurança (RLS).
 

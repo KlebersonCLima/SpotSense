@@ -4,14 +4,14 @@ import { buildSpotRows } from './parking-spots.service'
 
 type Client = SupabaseClient<Database>
 
-export type SpotSummary = Pick<ParkingSpot, 'id' | 'status' | 'type'>
+export type SpotSummary = Pick<ParkingSpot, 'id' | 'situacao' | 'tipo'>
 export type ParkingLotWithSpots = ParkingLot & { spots: SpotSummary[] }
 
 export interface ParkingLotInput {
-  name: string
-  description?: string | null
-  address?: string | null
-  is_active: boolean
+  nome: string
+  descricao?: string | null
+  endereco?: string | null
+  ativo: boolean
 }
 
 export interface NewParkingLotInput extends ParkingLotInput {
@@ -24,10 +24,10 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 /** Normaliza apenas os campos enviados (não sobrescreve os ausentes com null). */
 function normalize(input: Partial<ParkingLotInput>) {
   const data: Partial<ParkingLotInput> = {}
-  if (input.name !== undefined) data.name = input.name.trim()
-  if (input.address !== undefined) data.address = input.address?.trim() || null
-  if (input.description !== undefined) data.description = input.description?.trim() || null
-  if (input.is_active !== undefined) data.is_active = input.is_active
+  if (input.nome !== undefined) data.nome = input.nome.trim()
+  if (input.endereco !== undefined) data.endereco = input.endereco?.trim() || null
+  if (input.descricao !== undefined) data.descricao = input.descricao?.trim() || null
+  if (input.ativo !== undefined) data.ativo = input.ativo
   return data
 }
 
@@ -36,8 +36,8 @@ export function parkingLotsService(client: Client) {
     async list(): Promise<ParkingLotWithSpots[]> {
       const { data, error } = await client
         .from('tblestacionamentos')
-        .select('*, spots:tblvagas(id, status, type)')
-        .order('created_at', { ascending: false })
+        .select('*, spots:tblvagas(id, situacao, tipo)')
+        .order('criado_em', { ascending: false })
       if (error) throw error
       return data as unknown as ParkingLotWithSpots[]
     },
@@ -53,7 +53,7 @@ export function parkingLotsService(client: Client) {
     async create({ spotCount, physicalSpotCount, ...lot }: NewParkingLotInput): Promise<ParkingLot> {
       const { data, error } = await client
         .from('tblestacionamentos')
-        .insert({ ...normalize(lot), name: lot.name.trim() })
+        .insert({ ...normalize(lot), nome: lot.nome.trim() })
         .select()
         .single()
       if (error) throw error

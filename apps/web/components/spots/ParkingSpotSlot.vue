@@ -14,16 +14,16 @@ const emit = defineEmits<{ toggle: [spot: ParkingSpot] }>()
 /** Tons neutros (paleta da marca) escolhidos de forma estável pelo número da vaga. */
 const CAR_COLORS = ['#f5f5f5', '#d4d4d4', '#a3a3a3', '#737373', '#e5e5e5', '#525252', '#262626']
 
-const isOccupied = computed(() => props.spot.status === 'occupied')
-const isPhysical = computed(() => props.spot.type === 'physical')
-const carColor = computed(() => CAR_COLORS[props.spot.spot_number % CAR_COLORS.length])
-const label = computed(() => String(props.spot.spot_number).padStart(2, '0'))
+const isOccupied = computed(() => props.spot.situacao === 'ocupada')
+const isPhysical = computed(() => props.spot.tipo === 'fisica')
+const carColor = computed(() => CAR_COLORS[props.spot.numero % CAR_COLORS.length])
+const label = computed(() => String(props.spot.numero).padStart(2, '0'))
 
 const tooltip = computed(() => {
-  const status = SPOT_STATUS_LABEL[props.spot.status]
+  const status = SPOT_STATUS_LABEL[props.spot.situacao]
   if (!isPhysical.value) return `Vaga ${label.value} · ${status} · clique para alternar`
   const sensor = props.device
-    ? `sensor ${props.device.is_active ? 'ativo' : 'inativo'}, visto ${formatRelativeTime(props.device.last_seen_at)}`
+    ? `sensor ${props.device.ativo ? 'ativo' : 'inativo'}, visto ${formatRelativeTime(props.device.ultimo_contato_em)}`
     : 'sem dispositivo vinculado'
   return `Vaga ${label.value} · ${status} · física (${sensor})`
 })
@@ -91,12 +91,12 @@ const tooltip = computed(() => {
         aria-hidden="true"
       >
         <span
-          v-if="!device || device.is_active"
+          v-if="!device || device.ativo"
           class="absolute inline-flex size-full animate-ping rounded-full bg-[var(--ss-neon)] opacity-75"
         />
         <span
           class="relative inline-flex size-2.5 rounded-full"
-          :class="device?.is_active === false ? 'bg-white/40' : 'bg-[var(--ss-neon)]'"
+          :class="device?.ativo === false ? 'bg-white/40' : 'bg-[var(--ss-neon)]'"
         />
       </span>
     </button>

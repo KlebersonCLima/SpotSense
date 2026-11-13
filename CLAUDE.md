@@ -13,6 +13,7 @@ Contexto completo do produto: [docs/contexto.md](docs/contexto.md). Arquitetura:
 - Toda tabela usa o prefixo `tbl` seguido do nome em português, **tudo junto, sem `_`**, mesmo quando o nome é composto.
   - Exemplos: `tblvagas`, `tblestacionamentos`, `tblvagasestacionamento`, `tbldispositivosiot`, `tblhistoricovagas`.
 - Os nomes conceituais do documento de contexto (`parking_lots`, `parking_spots`, `iot_devices`) devem ser traduzidos para esse padrão.
+- **Colunas e valores do banco também em português** (`nome`, `endereco`, `ativo`, `criado_em`, tipo `simulada`/`fisica`, situação `livre`/`ocupada`, origem `manual`/`sensor`). O contrato do ESP32 também: `POST /functions/v1/iot-situacao-vaga` com os headers `x-dispositivo-id` e `x-dispositivo-token` e o corpo `{"situacao":"ocupada"}`. Nomes de variáveis, funções e componentes do código seguem em inglês (decisão de escopo; pode ser revista).
 
 ### Stack (não substituir sem necessidade técnica real)
 - Nuxt 3 + TypeScript, Nuxt UI **v3** (a v4 exige Nuxt 4) + Tailwind CSS v4.

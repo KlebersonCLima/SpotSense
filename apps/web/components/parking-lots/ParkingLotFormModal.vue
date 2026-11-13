@@ -16,10 +16,10 @@ const emit = defineEmits<{ submit: [data: NewParkingLotInput] }>()
 const isEditing = computed(() => Boolean(props.lot))
 
 const baseSchema = z.object({
-  name: z.string().trim().min(2, 'Informe pelo menos 2 caracteres.').max(120, 'Máximo de 120 caracteres.'),
-  address: z.string().trim().max(255, 'Máximo de 255 caracteres.'),
-  description: z.string().trim().max(500, 'Máximo de 500 caracteres.'),
-  is_active: z.boolean(),
+  nome: z.string().trim().min(2, 'Informe pelo menos 2 caracteres.').max(120, 'Máximo de 120 caracteres.'),
+  endereco: z.string().trim().max(255, 'Máximo de 255 caracteres.'),
+  descricao: z.string().trim().max(500, 'Máximo de 500 caracteres.'),
+  ativo: z.boolean(),
   spotCount: z.number({ error: 'Informe um número.' }).int().min(0),
   physicalSpotCount: z.number({ error: 'Informe um número.' }).int().min(0),
 })
@@ -39,10 +39,10 @@ type FormState = z.infer<typeof baseSchema>
 
 function initialState(): FormState {
   return {
-    name: props.lot?.name ?? '',
-    address: props.lot?.address ?? '',
-    description: props.lot?.description ?? '',
-    is_active: props.lot?.is_active ?? true,
+    nome: props.lot?.nome ?? '',
+    endereco: props.lot?.endereco ?? '',
+    descricao: props.lot?.descricao ?? '',
+    ativo: props.lot?.ativo ?? true,
     spotCount: 20,
     physicalSpotCount: 1,
   }
@@ -67,16 +67,16 @@ function onSubmit() {
   >
     <template #body>
       <UForm id="parking-lot-form" :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormField label="Nome" name="name" required>
-          <UInput v-model="state.name" placeholder="Ex.: Estacionamento Central" class="w-full" autofocus />
+        <UFormField label="Nome" name="nome" required>
+          <UInput v-model="state.nome" placeholder="Ex.: Estacionamento Central" class="w-full" autofocus />
         </UFormField>
 
-        <UFormField label="Endereço" name="address">
-          <UInput v-model="state.address" placeholder="Rua, número, bairro" icon="i-lucide-map-pin" class="w-full" />
+        <UFormField label="Endereço" name="endereco">
+          <UInput v-model="state.endereco" placeholder="Rua, número, bairro" icon="i-lucide-map-pin" class="w-full" />
         </UFormField>
 
-        <UFormField label="Descrição" name="description">
-          <UTextarea v-model="state.description" :rows="2" placeholder="Observações sobre o estacionamento" class="w-full" autoresize />
+        <UFormField label="Descrição" name="descricao">
+          <UTextarea v-model="state.descricao" :rows="2" placeholder="Observações sobre o estacionamento" class="w-full" autoresize />
         </UFormField>
 
         <div v-if="!isEditing" class="grid gap-4 sm:grid-cols-2">
@@ -88,7 +88,7 @@ function onSubmit() {
           </UFormField>
         </div>
 
-        <USwitch v-model="state.is_active" label="Estacionamento ativo" description="Estacionamentos inativos não aparecem no dashboard." />
+        <USwitch v-model="state.ativo" label="Estacionamento ativo" description="Estacionamentos inativos não aparecem no dashboard." />
       </UForm>
     </template>
 

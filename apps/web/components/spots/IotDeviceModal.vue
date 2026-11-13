@@ -26,14 +26,14 @@ const state = reactive({ identifier: '' })
 const loading = ref(false)
 const credentials = ref<RegisteredIotDevice | null>(null)
 
-const endpoint = computed(() => `${config.public.supabase.url}/functions/v1/iot-spot-status`)
+const endpoint = computed(() => `${config.public.supabase.url}/functions/v1/iot-situacao-vaga`)
 
 const credentialItems = computed(() =>
   credentials.value
     ? [
         { label: 'Endpoint (API_ENDPOINT)', value: endpoint.value },
-        { label: 'Identificador (DEVICE_ID)', value: credentials.value.device_identifier },
-        { label: 'Token (DEVICE_TOKEN)', value: credentials.value.device_token },
+        { label: 'Identificador (DEVICE_ID)', value: credentials.value.identificador },
+        { label: 'Token (DEVICE_TOKEN)', value: credentials.value.token },
       ]
     : [],
 )
@@ -41,7 +41,7 @@ const credentialItems = computed(() =>
 watch(open, (isOpen) => {
   if (!isOpen) return
   credentials.value = null
-  state.identifier = props.device?.device_identifier ?? `esp32-vaga-${props.spot?.spot_number ?? ''}`
+  state.identifier = props.device?.identificador ?? `esp32-vaga-${props.spot?.numero ?? ''}`
 })
 
 async function onSubmit() {
@@ -60,7 +60,7 @@ async function copy(value: string) {
 <template>
   <UModal
     v-model:open="open"
-    :title="`Dispositivo IoT · Vaga ${spot?.spot_number ?? ''}`"
+    :title="`Dispositivo IoT · Vaga ${spot?.numero ?? ''}`"
     description="O ESP32 usa o identificador e o token para enviar o estado da vaga."
   >
     <template #body>
@@ -90,13 +90,13 @@ async function copy(value: string) {
       <div v-else class="space-y-5">
         <div v-if="device" class="glass flex items-center justify-between gap-3 rounded-[var(--ss-radius-md)] p-4">
           <div class="min-w-0">
-            <p class="truncate font-medium">{{ device.device_identifier }}</p>
-            <p class="text-xs text-[var(--ss-text-muted)]">Última comunicação: {{ formatRelativeTime(device.last_seen_at) }}</p>
+            <p class="truncate font-medium">{{ device.identificador }}</p>
+            <p class="text-xs text-[var(--ss-text-muted)]">Última comunicação: {{ formatRelativeTime(device.ultimo_contato_em) }}</p>
           </div>
           <div class="flex items-center gap-2">
             <USwitch
-              :model-value="device.is_active"
-              :label="device.is_active ? 'Ativo' : 'Inativo'"
+              :model-value="device.ativo"
+              :label="device.ativo ? 'Ativo' : 'Inativo'"
               @update:model-value="(value) => emit('setActive', device!, Boolean(value))"
             />
             <UButton icon="i-lucide-trash-2" color="neutral" variant="ghost" size="sm" aria-label="Remover dispositivo" @click="emit('remove', device)" />

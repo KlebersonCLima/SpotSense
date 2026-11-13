@@ -23,7 +23,7 @@ export function useSpotsRealtime({ parkingLotId, onChange }: Options) {
           event: '*',
           schema: 'public',
           table: 'tblvagas',
-          ...(parkingLotId ? { filter: `parking_lot_id=eq.${parkingLotId}` } : {}),
+          ...(parkingLotId ? { filter: `estacionamento_id=eq.${parkingLotId}` } : {}),
         },
         payload => onChange(payload as SpotChangePayload),
       )

@@ -14,7 +14,7 @@
 └────────────────────────────────────────────────────┘
 ```
 
-- **Vagas simuladas:** a UI faz UPDATE direto no banco (permitido pelas policies RLS apenas para `type = 'simulated'`).
+- **Vagas simuladas:** a UI faz UPDATE direto no banco (permitido pelas policies RLS apenas para `tipo = 'simulada'`).
 - **Vagas físicas:** só a Edge Function altera o estado, usando a `service_role` key que existe **apenas** no ambiente da função. O dispositivo se autentica com um token próprio, e o banco guarda somente o hash desse token.
 
 ## Monorepo

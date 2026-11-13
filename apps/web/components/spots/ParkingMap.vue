@@ -44,7 +44,7 @@ const laneStyle = {
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div class="min-w-0 space-y-4">
     <div
       ref="container"
       class="asphalt relative overflow-x-auto rounded-[var(--ss-radius-lg)] border border-white/10 p-4 sm:p-6"

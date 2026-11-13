@@ -123,20 +123,20 @@ O app fica disponível em http://localhost:3000.
 O ESP32 envia o estado da vaga assim (dá para simular com `curl`, sem a placa):
 
 ```bash
-curl -X POST http://127.0.0.1:54321/functions/v1/iot-spot-status \
-  -H "x-device-id: esp32-vaga-50" \
-  -H "x-device-token: <token>" \
+curl -X POST http://127.0.0.1:54321/functions/v1/iot-situacao-vaga \
+  -H "x-dispositivo-id: esp32-vaga-50" \
+  -H "x-dispositivo-token: <token>" \
   -H "Content-Type: application/json" \
-  -d '{"status":"occupied"}'   # ou "available"
+  -d '{"situacao":"ocupada"}'   # ou "livre"
 ```
 
 | Resposta | Significado |
 | --- | --- |
-| `200 { ok, spot_number, status, changed }` | Estado registrado |
-| `400 invalid_status` / `invalid_json` | Corpo inválido |
-| `401 unauthorized` / `missing_credentials` | Identificador ou token incorretos |
-| `403 device_inactive` | Dispositivo desativado no painel |
-| `409 spot_not_physical` | A vaga vinculada não é física |
+| `200 { ok, numero_vaga, situacao, alterada }` | Situação registrada |
+| `400 situacao_invalida` / `json_invalido` | Corpo inválido |
+| `401 nao_autorizado` / `credenciais_ausentes` | Identificador ou token incorretos |
+| `403 dispositivo_inativo` | Dispositivo desativado no painel |
+| `409 vaga_nao_fisica` | A vaga vinculada não é física |
 
 O mapa atualiza em tempo real e a mudança aparece no feed de atividade como **Sensor IoT**.
 
