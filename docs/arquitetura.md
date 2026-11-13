@@ -36,10 +36,10 @@
 | `layouts/` | `default` (sidebar + header glass) e `auth` (telas de login) |
 | `components/layout/` | Estrutura da aplicação: `AppSidebar`, `AppHeader`, `AppLogo`, `ThemeToggle` |
 | `components/dashboard/` | Cards de métricas e indicadores de ocupação |
-| `components/parking-lots/` | Formulários, tabelas e cards de estacionamentos |
-| `components/spots/` | Grade de vagas, card de vaga, badges de tipo e status |
+| `components/estacionamentos/` | Formulários, tabelas e cards de estacionamentos |
+| `components/vagas/` | Grade de vagas, card de vaga, badges de tipo e status |
 | `components/common/` | Componentes genéricos reutilizáveis (estados vazios, loaders etc.) |
-| `composables/` | Estado e lógica reativa (`useParkingLots`, `useSpots`, `useSpotsRealtime`…) |
+| `composables/` | Estado e lógica reativa (`useEstacionamentos`, `useSpots`, `useVagasRealtime`…) |
 | `services/` | Acesso ao Supabase (queries puras e tipadas, sem estado de UI) |
 | `types/` | Tipos exclusivos do frontend (os de domínio ficam em `@spotsense/shared`) |
 | `utils/` | Funções puras e constantes (ex.: `navigation.ts`) |

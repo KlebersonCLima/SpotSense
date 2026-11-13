@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { z } from 'zod'
-import type { IotDevice, ParkingSpot, RegisteredIotDevice } from '@spotsense/shared'
+import type { Dispositivo, Vaga, DispositivoRegistrado } from '@spotsense/shared'
 
 const open = defineModel<boolean>('open', { default: false })
 
 const props = defineProps<{
-  spot: ParkingSpot | null
-  device: IotDevice | null
-  register: (spotId: string, identifier: string) => Promise<RegisteredIotDevice | null>
+  spot: Vaga | null
+  device: Dispositivo | null
+  register: (spotId: string, identifier: string) => Promise<DispositivoRegistrado | null>
 }>()
 
 const emit = defineEmits<{
-  setActive: [device: IotDevice, isActive: boolean]
-  remove: [device: IotDevice]
+  setActive: [device: Dispositivo, isActive: boolean]
+  remove: [device: Dispositivo]
 }>()
 
 const config = useRuntimeConfig()
@@ -24,7 +24,7 @@ const schema = z.object({
 
 const state = reactive({ identifier: '' })
 const loading = ref(false)
-const credentials = ref<RegisteredIotDevice | null>(null)
+const credentials = ref<DispositivoRegistrado | null>(null)
 
 const endpoint = computed(() => `${config.public.supabase.url}/functions/v1/iot-situacao-vaga`)
 

@@ -48,7 +48,7 @@ SpotSense/
 │       ├── components/
 │       │   ├── layout/       # Sidebar, header, logo, alternância de tema
 │       │   ├── dashboard/    # Métricas e indicadores
-│       │   ├── parking-lots/ # Estacionamentos
+│       │   ├── estacionamentos/ # Estacionamentos
 │       │   ├── spots/        # Vagas
 │       │   └── common/       # Componentes genéricos
 │       ├── composables/      # Estado e lógica reativa

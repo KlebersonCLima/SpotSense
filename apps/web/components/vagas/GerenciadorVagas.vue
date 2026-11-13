@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import type { IotDevice, ParkingSpot, SpotType } from '@spotsense/shared'
+import type { Dispositivo, Vaga, TipoVaga } from '@spotsense/shared'
 
 const props = withDefaults(defineProps<{
-  spots: ParkingSpot[]
-  devices?: Map<string, IotDevice>
+  spots: Vaga[]
+  devices?: Map<string, Dispositivo>
   nextSpotNumber: number
   adding?: boolean
 }>(), { devices: () => new Map(), adding: false })
 
 const emit = defineEmits<{
-  add: [count: number, type: SpotType]
-  toggle: [spot: ParkingSpot]
-  setType: [spot: ParkingSpot, type: SpotType]
-  remove: [spot: ParkingSpot]
-  manageDevice: [spot: ParkingSpot]
+  add: [count: number, type: TipoVaga]
+  toggle: [spot: Vaga]
+  setType: [spot: Vaga, type: TipoVaga]
+  remove: [spot: Vaga]
+  manageDevice: [spot: Vaga]
 }>()
 
 const typeItems = [
@@ -22,7 +22,7 @@ const typeItems = [
 ]
 
 const newCount = ref<number | null>(1)
-const newType = ref<SpotType>('simulada')
+const newType = ref<TipoVaga>('simulada')
 
 const count = computed(() => Math.min(200, Math.max(1, Math.floor(newCount.value ?? 1))))
 const numberingHint = computed(() =>
@@ -82,7 +82,7 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
             :items="typeItems"
             class="w-full md:order-2"
             :aria-label="`Tipo da vaga ${spot.numero}`"
-            @update:model-value="(value) => emit('setType', spot, value as SpotType)"
+            @update:model-value="(value) => emit('setType', spot, value as TipoVaga)"
           />
 
           <UButton
@@ -98,7 +98,7 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
             :color="spot.situacao === 'ocupada' ? 'neutral' : 'primary'"
             :variant="spot.situacao === 'ocupada' ? 'solid' : 'soft'"
             :icon="spot.tipo === 'fisica' ? 'i-lucide-lock' : 'i-lucide-repeat'"
-            :label="SPOT_STATUS_LABEL[spot.situacao]"
+            :label="ROTULO_SITUACAO_VAGA[spot.situacao]"
             :disabled="spot.tipo === 'fisica'"
             :title="spot.tipo === 'fisica' ? 'Controlada pelo sensor IoT' : 'Alternar status'"
             block

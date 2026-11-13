@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { z } from 'zod'
-import type { ParkingLot } from '@spotsense/shared'
-import type { NewParkingLotInput } from '~/services/parking-lots.service'
+import type { Estacionamento } from '@spotsense/shared'
+import type { NovoEstacionamentoInput } from '~/services/estacionamentos.service'
 
 const open = defineModel<boolean>('open', { default: false })
 
 const props = withDefaults(defineProps<{
   /** Estacionamento em edição; quando ausente, o modal cria um novo. */
-  lot?: ParkingLot | null
+  lot?: Estacionamento | null
   loading?: boolean
 }>(), { lot: null, loading: false })
 
-const emit = defineEmits<{ submit: [data: NewParkingLotInput] }>()
+const emit = defineEmits<{ submit: [data: NovoEstacionamentoInput] }>()
 
 const isEditing = computed(() => Boolean(props.lot))
 

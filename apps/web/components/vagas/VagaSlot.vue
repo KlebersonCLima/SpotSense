@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { IotDevice, ParkingSpot } from '@spotsense/shared'
+import type { Dispositivo, Vaga } from '@spotsense/shared'
 
 const props = withDefaults(defineProps<{
-  spot: ParkingSpot
+  spot: Vaga
   /** Fileira de cima (abre para baixo) ou de baixo (abre para cima). */
   side: 'top' | 'bottom'
-  device?: IotDevice | null
+  device?: Dispositivo | null
   flash?: boolean
 }>(), { device: null, flash: false })
 
-const emit = defineEmits<{ toggle: [spot: ParkingSpot] }>()
+const emit = defineEmits<{ toggle: [spot: Vaga] }>()
 
 /** Tons neutros (paleta da marca) escolhidos de forma estável pelo número da vaga. */
 const CAR_COLORS = ['#f5f5f5', '#d4d4d4', '#a3a3a3', '#737373', '#e5e5e5', '#525252', '#262626']
@@ -20,7 +20,7 @@ const carColor = computed(() => CAR_COLORS[props.spot.numero % CAR_COLORS.length
 const label = computed(() => String(props.spot.numero).padStart(2, '0'))
 
 const tooltip = computed(() => {
-  const status = SPOT_STATUS_LABEL[props.spot.situacao]
+  const status = ROTULO_SITUACAO_VAGA[props.spot.situacao]
   if (!isPhysical.value) return `Vaga ${label.value} · ${status} · clique para alternar`
   const sensor = props.device
     ? `sensor ${props.device.ativo ? 'ativo' : 'inativo'}, visto ${formatRelativeTime(props.device.ultimo_contato_em)}`

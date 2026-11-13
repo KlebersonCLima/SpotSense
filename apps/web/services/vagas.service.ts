@@ -1,14 +1,14 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database, ParkingSpot, SpotHistoryEntry, SpotStatus, SpotType, TablesInsert } from '@spotsense/shared'
+import type { Database, Vaga, HistoricoVaga, SituacaoVaga, TipoVaga, TablesInsert } from '@spotsense/shared'
 
 type Client = SupabaseClient<Database>
 
-export type SpotHistoryWithSpot = SpotHistoryEntry & { spot: { numero: number } }
+export type HistoricoVagaComVaga = HistoricoVaga & { spot: { numero: number } }
 
-const SPOT_COLUMNS = 'id, estacionamento_id, numero, tipo, situacao, situacao_atualizada_em, criado_em, atualizado_em'
+const COLUNAS_VAGA = 'id, estacionamento_id, numero, tipo, situacao, situacao_atualizada_em, criado_em, atualizado_em'
 
 /** Monta as linhas de vagas numeradas a partir de `startNumber`; as últimas `physicalCount` são físicas. */
-export function buildSpotRows(
+export function montarLinhasVagas(
   parkingLotId: string,
   startNumber: number,
   count: number,
@@ -22,44 +22,44 @@ export function buildSpotRows(
   }))
 }
 
-export function parkingSpotsService(client: Client) {
+export function vagasService(client: Client) {
   return {
-    async list(parkingLotId: string): Promise<ParkingSpot[]> {
+    async list(parkingLotId: string): Promise<Vaga[]> {
       const { data, error } = await client
         .from('tblvagas')
-        .select(SPOT_COLUMNS)
+        .select(COLUNAS_VAGA)
         .eq('estacionamento_id', parkingLotId)
         .order('numero')
       if (error) throw error
-      return data as ParkingSpot[]
+      return data as Vaga[]
     },
 
-    async add(parkingLotId: string, startNumber: number, count: number, type: SpotType): Promise<void> {
-      const rows = buildSpotRows(parkingLotId, startNumber, count, type === 'fisica' ? count : 0)
+    async add(parkingLotId: string, startNumber: number, count: number, type: TipoVaga): Promise<void> {
+      const rows = montarLinhasVagas(parkingLotId, startNumber, count, type === 'fisica' ? count : 0)
       const { error } = await client.from('tblvagas').insert(rows)
       if (error) throw error
     },
 
-    async setStatus(id: string, status: SpotStatus): Promise<ParkingSpot> {
+    async setStatus(id: string, status: SituacaoVaga): Promise<Vaga> {
       const { data, error } = await client
         .from('tblvagas')
         .update({ situacao: status })
         .eq('id', id)
-        .select(SPOT_COLUMNS)
+        .select(COLUNAS_VAGA)
         .single()
       if (error) throw error
-      return data as ParkingSpot
+      return data as Vaga
     },
 
-    async setType(id: string, type: SpotType): Promise<ParkingSpot> {
+    async setType(id: string, type: TipoVaga): Promise<Vaga> {
       const { data, error } = await client
         .from('tblvagas')
         .update({ tipo: type })
         .eq('id', id)
-        .select(SPOT_COLUMNS)
+        .select(COLUNAS_VAGA)
         .single()
       if (error) throw error
-      return data as ParkingSpot
+      return data as Vaga
     },
 
     async remove(id: string): Promise<void> {
@@ -67,7 +67,7 @@ export function parkingSpotsService(client: Client) {
       if (error) throw error
     },
 
-    async history(parkingLotId: string, limit = 15): Promise<SpotHistoryWithSpot[]> {
+    async history(parkingLotId: string, limit = 15): Promise<HistoricoVagaComVaga[]> {
       const { data, error } = await client
         .from('tblhistoricovagas')
         .select('*, spot:tblvagas!inner(numero, estacionamento_id)')
@@ -75,7 +75,7 @@ export function parkingSpotsService(client: Client) {
         .order('criado_em', { ascending: false })
         .limit(limit)
       if (error) throw error
-      return data as unknown as SpotHistoryWithSpot[]
+      return data as unknown as HistoricoVagaComVaga[]
     },
   }
 }

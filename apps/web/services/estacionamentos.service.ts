@@ -1,20 +1,20 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database, ParkingLot, ParkingSpot } from '@spotsense/shared'
-import { buildSpotRows } from './parking-spots.service'
+import type { Database, Estacionamento, Vaga } from '@spotsense/shared'
+import { montarLinhasVagas } from './vagas.service'
 
 type Client = SupabaseClient<Database>
 
-export type SpotSummary = Pick<ParkingSpot, 'id' | 'situacao' | 'tipo'>
-export type ParkingLotWithSpots = ParkingLot & { spots: SpotSummary[] }
+export type ResumoVagas = Pick<Vaga, 'id' | 'situacao' | 'tipo'>
+export type EstacionamentoComVagas = Estacionamento & { spots: ResumoVagas[] }
 
-export interface ParkingLotInput {
+export interface EstacionamentoInput {
   nome: string
   descricao?: string | null
   endereco?: string | null
   ativo: boolean
 }
 
-export interface NewParkingLotInput extends ParkingLotInput {
+export interface NovoEstacionamentoInput extends EstacionamentoInput {
   spotCount: number
   physicalSpotCount: number
 }
@@ -22,8 +22,8 @@ export interface NewParkingLotInput extends ParkingLotInput {
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 /** Normaliza apenas os campos enviados (não sobrescreve os ausentes com null). */
-function normalize(input: Partial<ParkingLotInput>) {
-  const data: Partial<ParkingLotInput> = {}
+function normalize(input: Partial<EstacionamentoInput>) {
+  const data: Partial<EstacionamentoInput> = {}
   if (input.nome !== undefined) data.nome = input.nome.trim()
   if (input.endereco !== undefined) data.endereco = input.endereco?.trim() || null
   if (input.descricao !== undefined) data.descricao = input.descricao?.trim() || null
@@ -31,18 +31,18 @@ function normalize(input: Partial<ParkingLotInput>) {
   return data
 }
 
-export function parkingLotsService(client: Client) {
+export function estacionamentosService(client: Client) {
   return {
-    async list(): Promise<ParkingLotWithSpots[]> {
+    async list(): Promise<EstacionamentoComVagas[]> {
       const { data, error } = await client
         .from('tblestacionamentos')
         .select('*, spots:tblvagas(id, situacao, tipo)')
         .order('criado_em', { ascending: false })
       if (error) throw error
-      return data as unknown as ParkingLotWithSpots[]
+      return data as unknown as EstacionamentoComVagas[]
     },
 
-    async getById(id: string): Promise<ParkingLot | null> {
+    async getById(id: string): Promise<Estacionamento | null> {
       if (!UUID_PATTERN.test(id)) return null
       const { data, error } = await client.from('tblestacionamentos').select('*').eq('id', id).maybeSingle()
       if (error) throw error
@@ -50,7 +50,7 @@ export function parkingLotsService(client: Client) {
     },
 
     /** Cria o estacionamento e suas vagas (as últimas `physicalSpotCount` são físicas). */
-    async create({ spotCount, physicalSpotCount, ...lot }: NewParkingLotInput): Promise<ParkingLot> {
+    async create({ spotCount, physicalSpotCount, ...lot }: NovoEstacionamentoInput): Promise<Estacionamento> {
       const { data, error } = await client
         .from('tblestacionamentos')
         .insert({ ...normalize(lot), nome: lot.nome.trim() })
@@ -61,7 +61,7 @@ export function parkingLotsService(client: Client) {
       if (spotCount > 0) {
         const { error: spotsError } = await client
           .from('tblvagas')
-          .insert(buildSpotRows(data.id, 1, spotCount, physicalSpotCount))
+          .insert(montarLinhasVagas(data.id, 1, spotCount, physicalSpotCount))
         if (spotsError) {
           await client.from('tblestacionamentos').delete().eq('id', data.id)
           throw spotsError
@@ -70,7 +70,7 @@ export function parkingLotsService(client: Client) {
       return data
     },
 
-    async update(id: string, input: Partial<ParkingLotInput>): Promise<ParkingLot> {
+    async update(id: string, input: Partial<EstacionamentoInput>): Promise<Estacionamento> {
       const { data, error } = await client
         .from('tblestacionamentos')
         .update(normalize(input))

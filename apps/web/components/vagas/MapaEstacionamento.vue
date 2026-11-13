@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { IotDevice, ParkingSpot } from '@spotsense/shared'
+import type { Dispositivo, Vaga } from '@spotsense/shared'
 
 const props = withDefaults(defineProps<{
-  spots: ParkingSpot[]
-  devices?: Map<string, IotDevice>
+  spots: Vaga[]
+  devices?: Map<string, Dispositivo>
   recentlyChanged?: Record<string, true>
 }>(), { devices: () => new Map(), recentlyChanged: () => ({}) })
 
-const emit = defineEmits<{ toggle: [spot: ParkingSpot] }>()
+const emit = defineEmits<{ toggle: [spot: Vaga] }>()
 
 const SLOT_WIDTH = 64
 const container = ref<HTMLElement | null>(null)
@@ -27,11 +27,11 @@ onBeforeUnmount(() => observer?.disconnect())
 
 /** Agrupa as vagas em blocos: fileira de cima + corredor + fileira de baixo. */
 const blocks = computed(() => {
-  const rows: ParkingSpot[][] = []
+  const rows: Vaga[][] = []
   for (let i = 0; i < props.spots.length; i += perRow.value) {
     rows.push(props.spots.slice(i, i + perRow.value))
   }
-  const result: Array<{ top: ParkingSpot[], bottom: ParkingSpot[] }> = []
+  const result: Array<{ top: Vaga[], bottom: Vaga[] }> = []
   for (let i = 0; i < rows.length; i += 2) {
     result.push({ top: rows[i] ?? [], bottom: rows[i + 1] ?? [] })
   }
@@ -59,7 +59,7 @@ const laneStyle = {
           />
 
           <div class="flex">
-            <ParkingSpotSlot
+            <VagaSlot
               v-for="spot in block.top"
               :key="spot.id"
               :spot="spot"
@@ -89,7 +89,7 @@ const laneStyle = {
           </div>
 
           <div v-if="block.bottom.length" class="flex">
-            <ParkingSpotSlot
+            <VagaSlot
               v-for="spot in block.bottom"
               :key="spot.id"
               :spot="spot"

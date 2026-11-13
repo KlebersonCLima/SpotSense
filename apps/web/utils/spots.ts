@@ -1,6 +1,6 @@
-import type { SpotStatus, SpotType } from '@spotsense/shared'
+import type { SituacaoVaga, TipoVaga } from '@spotsense/shared'
 
-export interface SpotStats {
+export interface EstatisticasVagas {
   total: number
   occupied: number
   available: number
@@ -9,7 +9,7 @@ export interface SpotStats {
   occupancyRate: number
 }
 
-export function summarizeSpots(spots: ReadonlyArray<{ situacao: SpotStatus | string, tipo: SpotType | string }>): SpotStats {
+export function resumirVagas(spots: ReadonlyArray<{ situacao: SituacaoVaga | string, tipo: TipoVaga | string }>): EstatisticasVagas {
   const total = spots.length
   const occupied = spots.filter(spot => spot.situacao === 'ocupada').length
   const physical = spots.filter(spot => spot.tipo === 'fisica').length
@@ -22,12 +22,12 @@ export function summarizeSpots(spots: ReadonlyArray<{ situacao: SpotStatus | str
   }
 }
 
-export const SPOT_STATUS_LABEL: Record<SpotStatus, string> = {
+export const ROTULO_SITUACAO_VAGA: Record<SituacaoVaga, string> = {
   livre: 'Disponível',
   ocupada: 'Ocupada',
 }
 
-export const SPOT_TYPE_LABEL: Record<SpotType, string> = {
+export const ROTULO_TIPO_VAGA: Record<TipoVaga, string> = {
   simulada: 'Simulada',
   fisica: 'Física (IoT)',
 }

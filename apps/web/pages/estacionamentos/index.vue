@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { NewParkingLotInput, ParkingLotWithSpots } from '~/services/parking-lots.service'
+import type { NovoEstacionamentoInput, EstacionamentoComVagas } from '~/services/estacionamentos.service'
 
 useSeoMeta({ title: 'Estacionamentos · SpotSense' })
 
-const { lots, status, create, update, setActive, remove } = useParkingLots()
+const { lots, status, create, update, setActive, remove } = useEstacionamentos()
 
 type Filter = 'all' | 'active' | 'inactive'
 const filter = ref<Filter>('all')
@@ -33,7 +33,7 @@ const filteredLots = computed(() => {
 
 // Formulário (criar/editar)
 const formOpen = ref(false)
-const editingLot = ref<ParkingLotWithSpots | null>(null)
+const editingLot = ref<EstacionamentoComVagas | null>(null)
 const saving = ref(false)
 
 function openCreate() {
@@ -41,12 +41,12 @@ function openCreate() {
   formOpen.value = true
 }
 
-function openEdit(lot: ParkingLotWithSpots) {
+function openEdit(lot: EstacionamentoComVagas) {
   editingLot.value = lot
   formOpen.value = true
 }
 
-async function onSubmit(data: NewParkingLotInput) {
+async function onSubmit(data: NovoEstacionamentoInput) {
   saving.value = true
   if (editingLot.value) {
     const { nome, endereco, descricao, ativo } = data
@@ -57,18 +57,18 @@ async function onSubmit(data: NewParkingLotInput) {
     const created = await create(data)
     if (created) {
       formOpen.value = false
-      await navigateTo(`/parking-lots/${created.id}`)
+      await navigateTo(`/estacionamentos/${created.id}`)
     }
   }
   saving.value = false
 }
 
 // Exclusão
-const lotToDelete = ref<ParkingLotWithSpots | null>(null)
+const lotToDelete = ref<EstacionamentoComVagas | null>(null)
 const confirmOpen = ref(false)
 const deleting = ref(false)
 
-function askRemove(lot: ParkingLotWithSpots) {
+function askRemove(lot: EstacionamentoComVagas) {
   lotToDelete.value = lot
   confirmOpen.value = true
 }
@@ -112,7 +112,7 @@ async function confirmRemove() {
     />
 
     <TransitionGroup v-else tag="div" name="list" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      <ParkingLotCard
+      <EstacionamentoCard
         v-for="lot in filteredLots"
         :key="lot.id"
         :lot="lot"
@@ -122,7 +122,7 @@ async function confirmRemove() {
       />
     </TransitionGroup>
 
-    <ParkingLotFormModal v-model:open="formOpen" :lot="editingLot" :loading="saving" @submit="onSubmit" />
+    <EstacionamentoFormModal v-model:open="formOpen" :lot="editingLot" :loading="saving" @submit="onSubmit" />
 
     <ConfirmModal
       v-model:open="confirmOpen"

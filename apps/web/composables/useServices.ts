@@ -1,13 +1,13 @@
-import { iotDevicesService } from '~/services/iot-devices.service'
-import { parkingLotsService } from '~/services/parking-lots.service'
-import { parkingSpotsService } from '~/services/parking-spots.service'
+import { dispositivosService } from '~/services/dispositivos.service'
+import { estacionamentosService } from '~/services/estacionamentos.service'
+import { vagasService } from '~/services/vagas.service'
 
 /** Serviços de acesso ao Supabase já ligados ao client da sessão atual. */
 export function useServices() {
   const client = useSupabaseClient()
   return {
-    parkingLots: parkingLotsService(client),
-    spots: parkingSpotsService(client),
-    devices: iotDevicesService(client),
+    parkingLots: estacionamentosService(client),
+    spots: vagasService(client),
+    devices: dispositivosService(client),
   }
 }

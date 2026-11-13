@@ -1,10 +1,10 @@
 <script setup lang="ts">
 useSeoMeta({ title: 'Dashboard · SpotSense' })
 
-const { lots, status } = useParkingLots()
+const { lots, status } = useEstacionamentos()
 
 const activeLots = computed(() => lots.value.filter(lot => lot.ativo))
-const stats = computed(() => summarizeSpots(activeLots.value.flatMap(lot => lot.spots)))
+const stats = computed(() => resumirVagas(activeLots.value.flatMap(lot => lot.spots)))
 </script>
 
 <template>
@@ -53,11 +53,11 @@ const stats = computed(() => summarizeSpots(activeLots.value.flatMap(lot => lot.
       <div class="space-y-4">
         <div class="flex items-center justify-between">
           <h2 class="text-lg font-semibold">Ocupação por estacionamento</h2>
-          <UButton to="/parking-lots" color="neutral" variant="ghost" trailing-icon="i-lucide-arrow-right" label="Ver todos" size="sm" />
+          <UButton to="/estacionamentos" color="neutral" variant="ghost" trailing-icon="i-lucide-arrow-right" label="Ver todos" size="sm" />
         </div>
         <EmptyState v-if="!activeLots.length" icon="i-lucide-power-off" title="Nenhum estacionamento ativo" />
         <div v-else class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          <ParkingLotCard v-for="lot in activeLots" :key="lot.id" :lot="lot" :actions="false" />
+          <EstacionamentoCard v-for="lot in activeLots" :key="lot.id" :lot="lot" :actions="false" />
         </div>
       </div>
     </template>

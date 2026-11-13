@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { SpotHistoryWithSpot } from '~/services/parking-spots.service'
+import type { HistoricoVagaComVaga } from '~/services/vagas.service'
 
 defineProps<{
-  entries: SpotHistoryWithSpot[]
+  entries: HistoricoVagaComVaga[]
 }>()
 </script>
 

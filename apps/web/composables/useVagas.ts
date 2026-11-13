@@ -1,16 +1,16 @@
-import type { ParkingSpot, SpotType } from '@spotsense/shared'
+import type { Vaga, TipoVaga } from '@spotsense/shared'
 
 const FLASH_DURATION_MS = 1600
 
 /** Vagas de um estacionamento com atualização em tempo real e ações. */
-export function useParkingSpots(parkingLotId: string, options: { onRealtimeChange?: () => void } = {}) {
+export function useVagas(parkingLotId: string, options: { onRealtimeChange?: () => void } = {}) {
   const { spots: service } = useServices()
   const toast = useToast()
 
   const { data: spots, status, refresh } = useAsyncData(
     `spots:${parkingLotId}`,
     () => service.list(parkingLotId),
-    { default: () => [] as ParkingSpot[] },
+    { default: () => [] as Vaga[] },
   )
 
   /** IDs das vagas que mudaram há pouco (para animar no mapa). */
@@ -24,13 +24,13 @@ export function useParkingSpots(parkingLotId: string, options: { onRealtimeChang
     }, FLASH_DURATION_MS)
   }
 
-  function upsert(spot: ParkingSpot) {
+  function upsert(spot: Vaga) {
     const index = spots.value.findIndex(item => item.id === spot.id)
     if (index === -1) spots.value = [...spots.value, spot].sort((a, b) => a.numero - b.numero)
     else spots.value.splice(index, 1, spot)
   }
 
-  useSpotsRealtime({
+  useVagasRealtime({
     parkingLotId,
     onChange: (payload) => {
       if (payload.eventType === 'DELETE') {
@@ -45,7 +45,7 @@ export function useParkingSpots(parkingLotId: string, options: { onRealtimeChang
     },
   })
 
-  const stats = computed(() => summarizeSpots(spots.value))
+  const stats = computed(() => resumirVagas(spots.value))
   const nextSpotNumber = computed(() => Math.max(0, ...spots.value.map(spot => spot.numero)) + 1)
 
   function notifyError(error: unknown) {
@@ -53,7 +53,7 @@ export function useParkingSpots(parkingLotId: string, options: { onRealtimeChang
   }
 
   /** Alterna o estado de uma vaga simulada (atualização otimista). */
-  async function toggleStatus(spot: ParkingSpot) {
+  async function toggleStatus(spot: Vaga) {
     if (spot.tipo === 'fisica') {
       toast.add({
         title: `Vaga ${spot.numero} é física`,
@@ -73,7 +73,7 @@ export function useParkingSpots(parkingLotId: string, options: { onRealtimeChang
     }
   }
 
-  async function addSpots(count: number, type: SpotType) {
+  async function addSpots(count: number, type: TipoVaga) {
     try {
       await service.add(parkingLotId, nextSpotNumber.value, count, type)
       toast.add({ title: count === 1 ? 'Vaga adicionada' : `${count} vagas adicionadas`, icon: 'i-lucide-check-circle-2', color: 'success' })
@@ -86,7 +86,7 @@ export function useParkingSpots(parkingLotId: string, options: { onRealtimeChang
     }
   }
 
-  async function setType(spot: ParkingSpot, type: SpotType) {
+  async function setType(spot: Vaga, type: TipoVaga) {
     try {
       upsert(await service.setType(spot.id, type))
     }
@@ -95,7 +95,7 @@ export function useParkingSpots(parkingLotId: string, options: { onRealtimeChang
     }
   }
 
-  async function removeSpot(spot: ParkingSpot) {
+  async function removeSpot(spot: Vaga) {
     try {
       await service.remove(spot.id)
       spots.value = spots.value.filter(item => item.id !== spot.id)

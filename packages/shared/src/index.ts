@@ -1,37 +1,37 @@
 import type { Tables } from './database.types'
 
 /** Tipos de vaga: simulada (controle manual) ou física (controle exclusivo do IoT). */
-export const SPOT_TYPES = ['simulada', 'fisica'] as const
-export type SpotType = (typeof SPOT_TYPES)[number]
+export const TIPOS_VAGA = ['simulada', 'fisica'] as const
+export type TipoVaga = (typeof TIPOS_VAGA)[number]
 
 /** Estados possíveis de uma vaga. */
-export const SPOT_STATUSES = ['livre', 'ocupada'] as const
-export type SpotStatus = (typeof SPOT_STATUSES)[number]
+export const SITUACOES_VAGA = ['livre', 'ocupada'] as const
+export type SituacaoVaga = (typeof SITUACOES_VAGA)[number]
 
 /** Origem de uma mudança de estado registrada no histórico. */
-export type SpotChangeSource = 'manual' | 'sensor'
+export type OrigemMudancaVaga = 'manual' | 'sensor'
 
 /** Estacionamento (tblestacionamentos). */
-export type ParkingLot = Tables<'tblestacionamentos'>
+export type Estacionamento = Tables<'tblestacionamentos'>
 
 /** Vaga (tblvagas) com tipo e status estreitados. */
-export type ParkingSpot = Omit<Tables<'tblvagas'>, 'tipo' | 'situacao'> & {
-  tipo: SpotType
-  situacao: SpotStatus
+export type Vaga = Omit<Tables<'tblvagas'>, 'tipo' | 'situacao'> & {
+  tipo: TipoVaga
+  situacao: SituacaoVaga
 }
 
 /** Dispositivo IoT sem o hash do token (que nunca chega ao frontend). */
-export type IotDevice = Omit<Tables<'tbldispositivosiot'>, 'token_hash'>
+export type Dispositivo = Omit<Tables<'tbldispositivosiot'>, 'token_hash'>
 
 /** Registro do histórico de vagas. */
-export type SpotHistoryEntry = Omit<Tables<'tblhistoricovagas'>, 'situacao_anterior' | 'situacao_nova' | 'origem'> & {
-  situacao_anterior: SpotStatus | null
-  situacao_nova: SpotStatus
-  origem: SpotChangeSource
+export type HistoricoVaga = Omit<Tables<'tblhistoricovagas'>, 'situacao_anterior' | 'situacao_nova' | 'origem'> & {
+  situacao_anterior: SituacaoVaga | null
+  situacao_nova: SituacaoVaga
+  origem: OrigemMudancaVaga
 }
 
 /** Retorno de registrar_dispositivo_iot: o token só é exibido uma vez. */
-export interface RegisteredIotDevice {
+export interface DispositivoRegistrado {
   dispositivo_id: string
   identificador: string
   token: string

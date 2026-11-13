@@ -1,14 +1,14 @@
-import type { NewParkingLotInput, ParkingLotInput, ParkingLotWithSpots } from '~/services/parking-lots.service'
+import type { NovoEstacionamentoInput, EstacionamentoInput, EstacionamentoComVagas } from '~/services/estacionamentos.service'
 
 /** Lista de estacionamentos com resumo das vagas + ações de CRUD (com notificações). */
-export function useParkingLots() {
+export function useEstacionamentos() {
   const { parkingLots } = useServices()
   const toast = useToast()
 
   const { data: lots, status, error, refresh } = useAsyncData(
-    'parking-lots',
+    'estacionamentos',
     () => parkingLots.list(),
-    { default: () => [] as ParkingLotWithSpots[] },
+    { default: () => [] as EstacionamentoComVagas[] },
   )
 
   // Inserções/exclusões chegam em lote (ex.: criar 50 vagas): agrupa em um único refresh
@@ -20,7 +20,7 @@ export function useParkingLots() {
   onBeforeUnmount(() => clearTimeout(refreshTimer))
 
   // Mantém os contadores de ocupação atualizados em tempo real
-  useSpotsRealtime({
+  useVagasRealtime({
     onChange: (payload) => {
       if (payload.eventType !== 'UPDATE') {
         scheduleRefresh()
@@ -51,8 +51,8 @@ export function useParkingLots() {
     status,
     error,
     refresh,
-    create: (input: NewParkingLotInput) => run(() => parkingLots.create(input), 'Estacionamento criado'),
-    update: (id: string, input: Partial<ParkingLotInput>) => run(() => parkingLots.update(id, input), 'Estacionamento atualizado'),
+    create: (input: NovoEstacionamentoInput) => run(() => parkingLots.create(input), 'Estacionamento criado'),
+    update: (id: string, input: Partial<EstacionamentoInput>) => run(() => parkingLots.update(id, input), 'Estacionamento atualizado'),
     setActive: (id: string, isActive: boolean) =>
       run(() => parkingLots.update(id, { ativo: isActive }), isActive ? 'Estacionamento ativado' : 'Estacionamento desativado'),
     remove: (id: string) => run(() => parkingLots.remove(id), 'Estacionamento excluído'),

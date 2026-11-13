@@ -1,16 +1,16 @@
 import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js'
-import type { ParkingSpot } from '@spotsense/shared'
+import type { Vaga } from '@spotsense/shared'
 
-export type SpotChangePayload = RealtimePostgresChangesPayload<ParkingSpot>
+export type MudancaVagaPayload = RealtimePostgresChangesPayload<Vaga>
 
 interface Options {
   /** Quando informado, escuta apenas as vagas deste estacionamento. */
   parkingLotId?: string
-  onChange: (payload: SpotChangePayload) => void
+  onChange: (payload: MudancaVagaPayload) => void
 }
 
 /** Escuta alterações em tblvagas via Supabase Realtime enquanto o componente estiver montado. */
-export function useSpotsRealtime({ parkingLotId, onChange }: Options) {
+export function useVagasRealtime({ parkingLotId, onChange }: Options) {
   const client = useSupabaseClient()
   let channel: RealtimeChannel | null = null
 
@@ -25,7 +25,7 @@ export function useSpotsRealtime({ parkingLotId, onChange }: Options) {
           table: 'tblvagas',
           ...(parkingLotId ? { filter: `estacionamento_id=eq.${parkingLotId}` } : {}),
         },
-        payload => onChange(payload as SpotChangePayload),
+        payload => onChange(payload as MudancaVagaPayload),
       )
       .subscribe()
   })

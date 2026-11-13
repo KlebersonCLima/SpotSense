@@ -13,7 +13,14 @@ Contexto completo do produto: [docs/contexto.md](docs/contexto.md). Arquitetura:
 - Toda tabela usa o prefixo `tbl` seguido do nome em português, **tudo junto, sem `_`**, mesmo quando o nome é composto.
   - Exemplos: `tblvagas`, `tblestacionamentos`, `tblvagasestacionamento`, `tbldispositivosiot`, `tblhistoricovagas`.
 - Os nomes conceituais do documento de contexto (`parking_lots`, `parking_spots`, `iot_devices`) devem ser traduzidos para esse padrão.
-- **Colunas e valores do banco também em português** (`nome`, `endereco`, `ativo`, `criado_em`, tipo `simulada`/`fisica`, situação `livre`/`ocupada`, origem `manual`/`sensor`). O contrato do ESP32 também: `POST /functions/v1/iot-situacao-vaga` com os headers `x-dispositivo-id` e `x-dispositivo-token` e o corpo `{"situacao":"ocupada"}`. Nomes de variáveis, funções e componentes do código seguem em inglês (decisão de escopo; pode ser revista).
+- **Colunas e valores do banco também em português** (`nome`, `endereco`, `ativo`, `criado_em`, tipo `simulada`/`fisica`, situação `livre`/`ocupada`, origem `manual`/`sensor`). O contrato do ESP32 também: `POST /functions/v1/iot-situacao-vaga` com os headers `x-dispositivo-id` e `x-dispositivo-token` e o corpo `{"situacao":"ocupada"}`.
+
+### Idioma do código
+- **Toda a programação é em português**: variáveis, funções, constantes, tipos, interfaces, composables, serviços, componentes, arquivos, pastas, rotas, comentários, mensagens e documentação.
+  - Exemplos: `useEstacionamentos`, `EstacionamentoCard`, `estacionamentosService`, `TipoVaga`, `/estacionamentos`.
+- **Exceções (nomes impostos por linguagem, framework ou biblioteca):** palavras-chave e APIs (`const`, `ref`, `computed`, `props`, `emit`), convenções do Nuxt/Vue (prefixo `use`, `app.vue`, `layouts/`, `pages/`, `error.vue`), sufixos técnicos consagrados (`Modal`, `Card`, `Form`, `Input`, `.service.ts`) e nomes do próprio produto/marca (`SpotSense`).
+- Código novo já nasce em português. Ao mexer em código antigo ainda em inglês (ex.: `parkingLotId`, `editingLot`, `listByParkingLot`), traduzir junto.
+- Ao renomear, usar `git mv` e conferir com `pnpm lint` e `pnpm typecheck` a cada etapa.
 
 ### Stack (não substituir sem necessidade técnica real)
 - Nuxt 3 + TypeScript, Nuxt UI **v3** (a v4 exige Nuxt 4) + Tailwind CSS v4.

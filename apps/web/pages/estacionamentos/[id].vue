@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ParkingSpot, SpotType } from '@spotsense/shared'
-import type { NewParkingLotInput } from '~/services/parking-lots.service'
+import type { Vaga, TipoVaga } from '@spotsense/shared'
+import type { NovoEstacionamentoInput } from '~/services/estacionamentos.service'
 
 const route = useRoute()
 const parkingLotId = String(route.params.id)
@@ -28,7 +28,7 @@ const {
   register,
   setActive: setDeviceActive,
   remove: removeDevice,
-} = useIotDevices(parkingLotId)
+} = useDispositivos(parkingLotId)
 
 const {
   spots,
@@ -39,7 +39,7 @@ const {
   addSpots,
   setType,
   removeSpot,
-} = useParkingSpots(parkingLotId, {
+} = useVagas(parkingLotId, {
   // Nova mudança: atualiza o feed e o "visto há…" dos sensores
   onRealtimeChange: () => {
     refreshHistory()
@@ -60,7 +60,7 @@ function openEdit() {
 const formOpen = ref(false)
 const saving = ref(false)
 
-async function onEdit(data: NewParkingLotInput) {
+async function onEdit(data: NovoEstacionamentoInput) {
   saving.value = true
   try {
     const { nome, endereco, descricao, ativo } = data
@@ -79,17 +79,17 @@ async function onEdit(data: NewParkingLotInput) {
 
 // Adicionar vagas
 const adding = ref(false)
-async function onAdd(count: number, type: SpotType) {
+async function onAdd(count: number, type: TipoVaga) {
   adding.value = true
   await addSpots(count, type)
   adding.value = false
 }
 
 // Exclusão de vaga
-const spotToDelete = ref<ParkingSpot | null>(null)
+const spotToDelete = ref<Vaga | null>(null)
 const confirmOpen = ref(false)
 
-function askRemoveSpot(spot: ParkingSpot) {
+function askRemoveSpot(spot: Vaga) {
   spotToDelete.value = spot
   confirmOpen.value = true
 }
@@ -100,11 +100,11 @@ async function confirmRemoveSpot() {
 }
 
 // Dispositivo IoT
-const deviceSpot = ref<ParkingSpot | null>(null)
+const deviceSpot = ref<Vaga | null>(null)
 const deviceModalOpen = ref(false)
 const deviceOfSpot = computed(() => (deviceSpot.value ? devices.value.get(deviceSpot.value.id) ?? null : null))
 
-function openDevice(spot: ParkingSpot) {
+function openDevice(spot: Vaga) {
   deviceSpot.value = spot
   deviceModalOpen.value = true
 }
@@ -115,7 +115,7 @@ function openDevice(spot: ParkingSpot) {
     <PageHeader :title="lot.nome" :description="lot.descricao ?? undefined">
       <template #eyebrow>
         <div class="flex flex-wrap items-center gap-2 text-sm">
-          <NuxtLink to="/parking-lots" class="flex items-center gap-1 text-[var(--ss-text-muted)] hover:text-[var(--ss-text)]">
+          <NuxtLink to="/estacionamentos" class="flex items-center gap-1 text-[var(--ss-text-muted)] hover:text-[var(--ss-text)]">
             <UIcon name="i-lucide-arrow-left" class="size-4" /> Estacionamentos
           </NuxtLink>
           <UBadge
@@ -149,13 +149,13 @@ function openDevice(spot: ParkingSpot) {
           title="Nenhuma vaga cadastrada"
         />
         <div v-else class="grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
-          <ParkingMap :spots="spots" :devices="devices" :recently-changed="recentlyChanged" @toggle="toggleStatus" />
-          <SpotActivityFeed :entries="history" />
+          <MapaEstacionamento :spots="spots" :devices="devices" :recently-changed="recentlyChanged" @toggle="toggleStatus" />
+          <AtividadeVagas :entries="history" />
         </div>
       </template>
 
       <template #manage>
-        <SpotsManager
+        <GerenciadorVagas
           :spots="spots"
           :devices="devices"
           :next-spot-number="nextSpotNumber"
@@ -169,7 +169,7 @@ function openDevice(spot: ParkingSpot) {
       </template>
     </UTabs>
 
-    <ParkingLotFormModal v-model:open="formOpen" :lot="lot" :loading="saving" @submit="onEdit" />
+    <EstacionamentoFormModal v-model:open="formOpen" :lot="lot" :loading="saving" @submit="onEdit" />
 
     <ConfirmModal
       v-model:open="confirmOpen"
@@ -178,7 +178,7 @@ function openDevice(spot: ParkingSpot) {
       @confirm="confirmRemoveSpot"
     />
 
-    <IotDeviceModal
+    <DispositivoModal
       v-model:open="deviceModalOpen"
       :spot="deviceSpot"
       :device="deviceOfSpot"

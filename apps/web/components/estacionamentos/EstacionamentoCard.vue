@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
-import type { ParkingLotWithSpots } from '~/services/parking-lots.service'
+import type { EstacionamentoComVagas } from '~/services/estacionamentos.service'
 
 const props = withDefaults(defineProps<{
-  lot: ParkingLotWithSpots
+  lot: EstacionamentoComVagas
   /** Exibe o menu de ações (editar, ativar/desativar, excluir). */
   actions?: boolean
 }>(), { actions: true })
 
 const emit = defineEmits<{
-  edit: [lot: ParkingLotWithSpots]
-  toggleActive: [lot: ParkingLotWithSpots]
-  remove: [lot: ParkingLotWithSpots]
+  edit: [lot: EstacionamentoComVagas]
+  toggleActive: [lot: EstacionamentoComVagas]
+  remove: [lot: EstacionamentoComVagas]
 }>()
 
-const stats = computed(() => summarizeSpots(props.lot.spots))
-const link = computed(() => `/parking-lots/${props.lot.id}`)
+const stats = computed(() => resumirVagas(props.lot.spots))
+const link = computed(() => `/estacionamentos/${props.lot.id}`)
 
 /** Mini mapa: até 40 pontinhos representando as vagas. */
 const MAX_DOTS = 40
