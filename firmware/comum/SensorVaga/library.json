@@ -1,0 +1,6 @@
+{
+  "name": "SensorVaga",
+  "version": "1.0.0",
+  "description": "Leitura do HC-SR04 com mediana, histerese e confirmação; decide se a vaga está livre ou ocupada",
+  "frameworks": "arduino"
+}
