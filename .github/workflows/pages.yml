@@ -1,6 +1,6 @@
 # Publica o app no GitHub Pages usando o Supabase NA NUVEM.
-# Execução MANUAL (Actions > "Publicar no GitHub Pages" > Run workflow), para não
-# publicar nada quebrado antes de o Supabase da nuvem estar configurado.
+# Publica automaticamente a cada push na main que altere o app (ou manualmente em
+# Actions > "Publicar no GitHub Pages" > Run workflow).
 #
 # Pré-requisitos (uma vez):
 #  1. Settings > Pages > Source: "GitHub Actions".
@@ -10,6 +10,13 @@
 name: Publicar no GitHub Pages
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/shared/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
