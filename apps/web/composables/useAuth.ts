@@ -27,7 +27,13 @@ export function useAuth() {
 
   /** Retorna `true` se a sessão já foi iniciada (sem confirmação de e-mail pendente). */
   async function signUp({ email, password }: Credentials): Promise<boolean> {
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    // No site publicado (GitHub Pages) o link do e-mail precisa voltar para /SpotSense/confirm.
+    // No modo local o Supabase já usa a Site URL configurada, então nada é enviado.
+    const config = useRuntimeConfig()
+    const emailRedirectTo = config.public.modoEstatico
+      ? new URL(`${config.app.baseURL}confirm`, window.location.origin).href
+      : undefined
+    const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo } })
     if (error) throw new Error(translateAuthError(error))
     return Boolean(data.session)
   }

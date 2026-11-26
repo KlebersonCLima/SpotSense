@@ -2,14 +2,23 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
-const schema = z.object({
+// Cadastro exige 6+ caracteres; a entrada só exige preenchimento (contas antigas/de demonstração).
+const schemaCadastro = z.object({
   email: z.email('Informe um e-mail válido.'),
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres.'),
 })
-type Schema = z.output<typeof schema>
+// TESTE: o usuário "abacate" entra sem @ (vira abacate@spotsense.com). Remover antes da entrega final.
+const USUARIO_TESTE = 'abacate'
+const EMAIL_USUARIO_TESTE = 'abacate@spotsense.com'
+const schemaEntrada = z.object({
+  email: z.union([z.literal(USUARIO_TESTE), z.email('Informe um e-mail válido.')], 'Informe um e-mail válido.'),
+  password: z.string().min(1, 'Informe a senha.'),
+})
+type Schema = z.output<typeof schemaCadastro>
 
 const mode = ref<'signin' | 'signup'>('signin')
 const isSignUp = computed(() => mode.value === 'signup')
+const schema = computed(() => (isSignUp.value ? schemaCadastro : schemaEntrada))
 
 const state = reactive<Partial<Schema>>({ email: '', password: '' })
 const loading = ref(false)
@@ -36,7 +45,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       }
     }
     else {
-      await signIn(event.data)
+      const email = event.data.email === USUARIO_TESTE ? EMAIL_USUARIO_TESTE : event.data.email
+      await signIn({ ...event.data, email })
     }
     await navigateTo('/')
   }
@@ -64,7 +74,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       <UFormField label="E-mail" name="email">
         <UInput
           v-model="state.email"
-          type="email"
+          type="text"
+          inputmode="email"
           autocomplete="email"
           placeholder="voce@exemplo.com"
           icon="i-lucide-mail"
