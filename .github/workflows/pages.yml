@@ -1,0 +1,58 @@
+# Publica o app no GitHub Pages usando o Supabase NA NUVEM.
+# Execução MANUAL (Actions > "Publicar no GitHub Pages" > Run workflow), para não
+# publicar nada quebrado antes de o Supabase da nuvem estar configurado.
+#
+# Pré-requisitos (uma vez):
+#  1. Settings > Pages > Source: "GitHub Actions".
+#  2. Settings > Secrets and variables > Actions > Secrets:
+#       SUPABASE_URL  = https://<projeto>.supabase.co
+#       SUPABASE_KEY  = chave pública (anon/publishable). NUNCA a service_role.
+name: Publicar no GitHub Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Gerar o site estático
+        run: pnpm --filter @spotsense/web generate
+        env:
+          NUXT_SSR: 'false'
+          NITRO_PRESET: github_pages
+          NUXT_APP_BASE_URL: /${{ github.event.repository.name }}/
+          NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NUXT_PUBLIC_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/.output/public
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

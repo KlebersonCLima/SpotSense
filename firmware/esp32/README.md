@@ -1,36 +1,28 @@
 # Firmware ESP32 — SpotSense
 
-Firmware da vaga física da maquete. Lê o sensor de presença e envia o estado da vaga para a Edge Function do Supabase via HTTP.
+Mede a vaga com o HC-SR04 e envia `livre` ou `ocupada` ao servidor por Wi-Fi.
+Passo a passo completo (ligação do sensor, divisor de tensão, configuração): [../README.md](../README.md).
 
-## Ferramentas
+## Comandos (dentro de `firmware/esp32`)
 
-- VS Code + extensão **PlatformIO IDE**
-- Placa: ESP32 DevKit (`esp32dev`), framework Arduino
+```bash
+python -m platformio run                # compila
+python -m platformio run -t upload      # grava na placa (USB)
+python -m platformio device monitor     # monitor serial (115200)
+```
 
 ## Configuração
 
-1. Copie `include/secrets.example.h` para `include/secrets.h` (esse arquivo é ignorado pelo git).
-2. Preencha Wi-Fi, URL da Edge Function, identificador e token do dispositivo.
+Copie `include/secrets.example.h` para `include/secrets.h` (ignorado pelo git) e preencha:
+`WIFI_SSID`, `WIFI_SENHA`, `URL_FUNCAO`, `DISPOSITIVO_ID`, `DISPOSITIVO_TOKEN`.
 
 > Nunca coloque a `service_role` key do Supabase no firmware.
-
-## Compilar e gravar
-
-Pela barra do PlatformIO no VS Code (✓ Build, → Upload, 🔌 Monitor) ou pelo terminal, dentro de `firmware/esp32`:
-
-```bash
-pio run                 # compila
-pio run -t upload       # grava na placa
-pio device monitor      # monitor serial (115200)
-```
 
 ## Estrutura
 
 ```
 esp32/
-├── platformio.ini            # placa, framework e bibliotecas
-├── include/
-│   └── secrets.example.h     # modelo de credenciais
-└── src/
-    └── main.cpp              # ponto de entrada
+├── platformio.ini            # placa e bibliotecas (usa ../comum)
+├── include/secrets.example.h # modelo de credenciais
+└── src/main.cpp              # Wi-Fi + envio; a lógica do sensor está em ../comum
 ```

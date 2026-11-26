@@ -67,7 +67,10 @@ SpotSense/
 │   ├── config.toml
 │   └── seed.sql
 ├── firmware/
-│   └── esp32/                # Firmware do ESP32 (PlatformIO)
+│   ├── comum/                # Lógica do sensor (usada pelas duas placas)
+│   ├── esp32/                # Firmware do ESP32 (PlatformIO)
+│   ├── uno/                  # Firmware do Arduino UNO (testes)
+│   └── ponte/                # Ponte serial UNO -> servidor
 ├── docs/                     # Contexto e arquitetura
 ├── CLAUDE.md                 # Regras do projeto para assistentes de IA
 └── package.json              # Scripts do workspace (pnpm)
@@ -142,7 +145,7 @@ O mapa atualiza em tempo real e a mudança aparece no feed de atividade como **S
 
 ## Firmware (ESP32)
 
-Veja [firmware/esp32/README.md](firmware/esp32/README.md).
+Como funciona, ligação do sensor e passo a passo: [firmware/README.md](firmware/README.md).
 
 ## Banco de dados
 

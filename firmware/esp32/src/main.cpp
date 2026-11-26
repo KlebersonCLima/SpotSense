@@ -59,9 +59,12 @@ bool enviarSituacao() {
         return false;
     }
 
-    HTTPClient http;
+    // Ordem importa: o HTTPClient guarda um ponteiro para o cliente de conexão.
+    // Os clientes são declarados ANTES para serem destruídos DEPOIS do http
+    // (declarar o http primeiro derrubava a placa ao sair da função).
     WiFiClientSecure clienteSeguro;
     WiFiClient cliente;
+    HTTPClient http;
 
     bool https = String(URL_FUNCAO).startsWith("https");
     if (https) {
