@@ -33,6 +33,9 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'pt-BR', class: 'dark' },
       title: 'SpotSense',
       meta: [
+        // viewport-fit=cover: o app usa a tela toda e respeita a área segura do celular
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+        { name: 'theme-color', content: '#161616' },
         { name: 'description', content: 'Gerenciamento inteligente de estacionamentos com IoT.' },
       ],
       link: [{ rel: 'icon', type: 'image/svg+xml', href: `${baseUrl}favicon.svg` }],

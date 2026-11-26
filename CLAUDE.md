@@ -35,7 +35,8 @@ Contexto completo do produto: [docs/contexto.md](docs/contexto.md). Arquitetura:
 
 ### Identidade visual
 - Paleta: `#101010`, `#FFFFFF`, `#C8FF00` (destaque). Nenhuma outra cor dominante.
-- Glassmorphism com os tokens de `apps/web/assets/css/main.css` (`--ss-*`, utilitários `glass` e `glass-strong`). Não usar cores soltas nos componentes.
+- Tokens em `apps/web/assets/css/main.css` (`--ss-*`). Estrutura (header, sidebar, navegação inferior, cards) usa o utilitário **`surface`**: sólido, plano e sem transparência. `glass`/`glass-strong` ficam só para elementos flutuantes (modais, menus). Não usar cores soltas nos componentes.
+- **Mobile first**: no celular o menu é a barra inferior (`NavegacaoInferior`) e o header é fixo e enxuto; a sidebar só existe no desktop (`lg`). Layout minimalista, sem brilhos nem blur decorativos.
 - **Somente tema escuro** (decisão do projeto que substitui o tema claro do documento de contexto). A classe `dark` é fixa no `<html>` e o color-mode do Nuxt UI fica desativado. Não reintroduzir alternância de tema.
 - Botões e campos são quadrados com leve arredondamento (6px, via `--ui-radius`).
 - Estados vazios são minimalistas: ícone e mensagem curta, **sem botão de ação** no lugar da lista.

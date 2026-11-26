@@ -111,7 +111,7 @@ function openDevice(spot: Vaga) {
 </script>
 
 <template>
-  <section v-if="lot" class="space-y-6">
+  <section v-if="lot" class="space-y-5 sm:space-y-6">
     <PageHeader :title="lot.nome" :description="lot.descricao ?? undefined">
       <template #eyebrow>
         <div class="flex flex-wrap items-center gap-2 text-sm">
@@ -134,14 +134,14 @@ function openDevice(spot: Vaga) {
       </template>
     </PageHeader>
 
-    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
       <StatCard label="Disponíveis" :value="stats.available" icon="i-lucide-circle-check" highlight :hint="`de ${stats.total} vagas`" />
       <StatCard label="Ocupadas" :value="stats.occupied" icon="i-lucide-car" />
       <StatCard label="Ocupação" :value="`${stats.occupancyRate}%`" icon="i-lucide-gauge" />
       <StatCard label="Vagas físicas" :value="stats.physical" icon="i-lucide-radio" hint="controladas por sensor" />
     </div>
 
-    <UTabs :items="tabs" variant="link" class="gap-6" :unmount-on-hide="false">
+    <UTabs :items="tabs" variant="link" class="gap-4 sm:gap-6" :unmount-on-hide="false" :ui="{ list: 'w-full sm:w-auto', trigger: 'flex-1 sm:flex-none' }">
       <template #map>
         <EmptyState
           v-if="!spots.length"

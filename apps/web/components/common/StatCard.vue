@@ -4,36 +4,21 @@ withDefaults(defineProps<{
   value: string | number
   icon: string
   hint?: string
-  /** Destaca o card com a cor neon. */
+  /** Destaca o valor com a cor neon. */
   highlight?: boolean
 }>(), { hint: undefined, highlight: false })
 </script>
 
 <template>
-  <div
-    class="glass relative overflow-hidden rounded-[var(--ss-radius-lg)] p-5"
-    :class="highlight && 'ring-1 ring-[var(--ss-neon)]/40'"
-  >
-    <div
-      v-if="highlight"
-      class="pointer-events-none absolute -right-10 -top-10 size-32 rounded-full bg-[var(--ss-neon)]/20 blur-2xl"
-      aria-hidden="true"
-    />
-    <div class="flex items-start justify-between gap-3">
-      <p class="text-sm text-[var(--ss-text-muted)]">
-        {{ label }}
-      </p>
-      <span
-        class="grid size-9 place-items-center rounded-xl"
-        :class="highlight ? 'bg-[var(--ss-neon)] text-[var(--ss-black)]' : 'bg-[var(--ss-glass-border)]'"
-      >
-        <UIcon :name="icon" class="size-5" />
-      </span>
-    </div>
-    <p class="mt-2 text-3xl font-semibold tabular-nums tracking-tight">
+  <div class="surface rounded-[var(--ss-radius-lg)] p-4">
+    <p class="flex items-center gap-2 text-xs text-[var(--ss-text-muted)] sm:text-sm">
+      <UIcon :name="icon" class="size-4 shrink-0" :class="highlight && 'text-[var(--ss-neon)]'" />
+      <span class="truncate">{{ label }}</span>
+    </p>
+    <p class="mt-2 text-2xl font-semibold tabular-nums tracking-tight sm:text-3xl" :class="highlight && 'text-[var(--ss-neon)]'">
       {{ value }}
     </p>
-    <p v-if="hint" class="mt-1 text-xs text-[var(--ss-text-muted)]">
+    <p v-if="hint" class="mt-1 hidden truncate text-xs text-[var(--ss-text-muted)] sm:block">
       {{ hint }}
     </p>
   </div>

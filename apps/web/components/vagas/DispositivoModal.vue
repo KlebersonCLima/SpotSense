@@ -88,7 +88,7 @@ async function copy(value: string) {
       </div>
 
       <div v-else class="space-y-5">
-        <div v-if="device" class="glass flex items-center justify-between gap-3 rounded-[var(--ss-radius-md)] p-4">
+        <div v-if="device" class="surface flex items-center justify-between gap-3 rounded-[var(--ss-radius-md)] p-4">
           <div class="min-w-0">
             <p class="truncate font-medium">{{ device.identificador }}</p>
             <p class="text-xs text-[var(--ss-text-muted)]">Última comunicação: {{ formatRelativeTime(device.ultimo_contato_em) }}</p>

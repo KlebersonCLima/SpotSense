@@ -40,7 +40,11 @@
   --ss-accent-ink: var(--ss-black); /* texto sobre o neon */
   --ss-accent-soft: rgb(200 255 0 / 0.12);
 
-  /* Glass */
+  /* Superfícies sólidas (estrutura: header, sidebar, navegação, cards) */
+  --ss-surface: #161616;
+  --ss-surface-border: rgb(255 255 255 / 0.08);
+
+  /* Glass (apenas elementos flutuantes: modais e menus) */
   --ss-glass-bg: rgb(24 24 24 / 0.55);
   --ss-glass-bg-strong: rgb(24 24 24 / 0.8);
   --ss-glass-border: rgb(255 255 255 / 0.08);
@@ -63,6 +67,12 @@
 }
 
 /* ---------- Utilitários ---------- */
+/* Superfície sólida e plana: base de cards, header, sidebar e navegação. */
+@utility surface {
+  background-color: var(--ss-surface);
+  border: 1px solid var(--ss-surface-border);
+}
+
 @utility glass {
   background: var(--ss-glass-highlight), var(--ss-glass-bg);
   backdrop-filter: blur(var(--ss-glass-blur)) saturate(140%);
@@ -83,11 +93,6 @@
 body {
   background-color: var(--ss-bg);
   color: var(--ss-text);
-  /* Brilho sutil de fundo para dar profundidade ao vidro */
-  background-image:
-    radial-gradient(60rem 40rem at 10% -10%, var(--ss-accent-soft), transparent 60%),
-    radial-gradient(50rem 30rem at 110% 110%, var(--ss-accent-soft), transparent 60%);
-  background-attachment: fixed;
 }
 
 /* Destaque quando uma vaga muda de estado em tempo real */

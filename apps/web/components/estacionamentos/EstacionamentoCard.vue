@@ -41,7 +41,7 @@ const menuItems = computed<DropdownMenuItem[][]>(() => [
 
 <template>
   <article
-    class="glass group relative flex flex-col gap-4 rounded-[var(--ss-radius-lg)] p-5 transition hover:-translate-y-0.5 hover:ring-1 hover:ring-[var(--ss-neon)]/40"
+    class="surface group relative flex flex-col gap-4 rounded-[var(--ss-radius-lg)] p-4 transition-colors hover:border-[var(--ss-neon)]/40 sm:p-5"
     :class="!lot.ativo && 'opacity-60'"
   >
     <header class="flex items-start justify-between gap-3">
@@ -49,7 +49,7 @@ const menuItems = computed<DropdownMenuItem[][]>(() => [
         <div class="mb-1 flex items-center gap-2">
           <span
             class="size-2 rounded-full"
-            :class="lot.ativo ? 'bg-[var(--ss-neon)] shadow-[0_0_8px_rgb(200_255_0/0.9)]' : 'bg-[var(--ss-text-muted)]'"
+            :class="lot.ativo ? 'bg-[var(--ss-neon)]' : 'bg-[var(--ss-text-muted)]'"
             aria-hidden="true"
           />
           <span class="text-xs font-medium uppercase tracking-wider text-[var(--ss-text-muted)]">

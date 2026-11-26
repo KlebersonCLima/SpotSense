@@ -47,7 +47,7 @@ const laneStyle = {
   <div class="min-w-0 space-y-4">
     <div
       ref="container"
-      class="asphalt relative overflow-x-auto rounded-[var(--ss-radius-lg)] border border-white/10 p-4 sm:p-6"
+      class="asphalt relative overflow-x-auto rounded-[var(--ss-radius-lg)] border border-white/10 p-3 sm:p-6"
     >
       <div class="mx-auto w-max space-y-2">
         <div v-for="(block, blockIndex) in blocks" :key="blockIndex">

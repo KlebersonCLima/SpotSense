@@ -15,7 +15,7 @@ function goHome() {
 <template>
   <UApp>
     <div class="flex min-h-dvh items-center justify-center p-4">
-      <div class="glass w-full max-w-sm space-y-4 rounded-[var(--ss-radius-lg)] p-8 text-center">
+      <div class="surface w-full max-w-sm space-y-4 rounded-[var(--ss-radius-lg)] p-6 text-center sm:p-8">
         <p class="font-mono text-5xl font-semibold text-[var(--ss-neon)]">
           {{ error.statusCode }}
         </p>

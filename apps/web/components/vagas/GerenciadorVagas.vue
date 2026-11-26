@@ -38,15 +38,15 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
 <template>
   <div class="space-y-4">
     <!-- adicionar vagas -->
-    <div class="glass space-y-2 rounded-[var(--ss-radius-lg)] p-4">
-      <div class="grid gap-4 sm:grid-cols-3 sm:items-end">
+    <div class="surface space-y-2 rounded-[var(--ss-radius-lg)] p-4">
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:items-end">
         <UFormField label="Quantidade">
           <UInputNumber v-model="newCount" :min="1" :max="200" class="w-full" />
         </UFormField>
         <UFormField label="Tipo">
           <USelect v-model="newType" :items="typeItems" class="w-full" />
         </UFormField>
-        <UButton icon="i-lucide-plus" :loading="adding" block label="Adicionar vagas" @click="emit('add', count, newType)" />
+        <UButton icon="i-lucide-plus" :loading="adding" block class="col-span-2 sm:col-span-1" label="Adicionar vagas" @click="emit('add', count, newType)" />
       </div>
       <p class="text-xs text-[var(--ss-text-muted)]">
         Numeração: {{ numberingHint }}
@@ -56,7 +56,7 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
     <EmptyState v-if="!spots.length" icon="i-lucide-grid-2x2" title="Nenhuma vaga cadastrada" />
 
     <!-- lista -->
-    <div v-else class="glass overflow-hidden rounded-[var(--ss-radius-lg)]">
+    <div v-else class="surface overflow-hidden rounded-[var(--ss-radius-lg)]">
       <div
         class="hidden gap-4 border-b border-[var(--ss-glass-border)] px-4 py-3 text-xs font-medium uppercase tracking-wider text-[var(--ss-text-muted)] md:grid"
         :class="GRID"
@@ -72,15 +72,16 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
         <li
           v-for="spot in spots"
           :key="spot.id"
-          class="grid grid-cols-[3rem_minmax(0,1fr)_2.25rem] items-center gap-x-3 gap-y-2 px-4 py-3 md:gap-x-4"
+          class="grid grid-cols-[2rem_minmax(0,1fr)_minmax(0,1fr)_2.25rem] items-center gap-x-2 gap-y-1 px-3 py-2.5 md:gap-x-4 md:px-4 md:py-3"
           :class="GRID"
         >
-          <span class="font-mono text-lg font-semibold md:order-1">{{ String(spot.numero).padStart(2, '0') }}</span>
+          <span class="order-1 font-mono text-base font-semibold md:text-lg">{{ String(spot.numero).padStart(2, '0') }}</span>
 
           <USelect
             :model-value="spot.tipo"
             :items="typeItems"
-            class="w-full md:order-2"
+            size="sm"
+            class="order-2 w-full"
             :aria-label="`Tipo da vaga ${spot.numero}`"
             @update:model-value="(value) => emit('setType', spot, value as TipoVaga)"
           />
@@ -89,7 +90,8 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
             icon="i-lucide-trash-2"
             color="neutral"
             variant="ghost"
-            class="justify-self-end md:order-5"
+            size="sm"
+            class="order-4 justify-self-end md:order-5"
             :aria-label="`Excluir vaga ${spot.numero}`"
             @click="emit('remove', spot)"
           />
@@ -102,12 +104,13 @@ const GRID = 'md:grid-cols-[4rem_12rem_10rem_minmax(0,1fr)_2.25rem]'
             :disabled="spot.tipo === 'fisica'"
             :title="spot.tipo === 'fisica' ? 'Controlada pelo sensor IoT' : 'Alternar status'"
             block
-            class="col-span-2 col-start-2 md:order-3 md:col-span-1 md:col-start-auto"
+            size="sm"
+            class="order-3 md:order-3"
             @click="emit('toggle', spot)"
           />
 
           <div
-            class="col-span-2 col-start-2 min-w-0 text-sm md:order-4 md:col-span-1 md:col-start-auto"
+            class="order-5 col-span-4 min-w-0 text-sm md:order-4 md:col-span-1"
             :class="spot.tipo !== 'fisica' && 'hidden md:block'"
           >
             <button

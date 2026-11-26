@@ -83,10 +83,13 @@ async function confirmRemove() {
 </script>
 
 <template>
-  <section class="space-y-6">
+  <section class="space-y-5 sm:space-y-6">
     <PageHeader title="Estacionamentos" description="Cadastre, organize e acompanhe todos os seus estacionamentos.">
       <template #actions>
-        <UButton icon="i-lucide-plus" label="Novo estacionamento" @click="openCreate" />
+        <UButton icon="i-lucide-plus" aria-label="Novo estacionamento" @click="openCreate">
+          <span class="sm:hidden">Novo</span>
+          <span class="hidden sm:inline">Novo estacionamento</span>
+        </UButton>
       </template>
     </PageHeader>
 

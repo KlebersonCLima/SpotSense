@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <section class="glass flex flex-col rounded-[var(--ss-radius-lg)] p-5" aria-labelledby="activity-title">
+  <section class="surface flex flex-col rounded-[var(--ss-radius-lg)] p-4 sm:p-5" aria-labelledby="activity-title">
     <h2 id="activity-title" class="mb-4 flex items-center gap-2 font-semibold">
       <span class="relative flex size-2">
         <span class="absolute inline-flex size-full animate-ping rounded-full bg-[var(--ss-neon)] opacity-75" />

@@ -10,7 +10,7 @@ watch(user, (value) => {
 </script>
 
 <template>
-  <div class="glass w-full max-w-sm space-y-8 rounded-[var(--ss-radius-lg)] p-8">
+  <div class="surface w-full max-w-sm space-y-8 rounded-[var(--ss-radius-lg)] p-6 sm:p-8">
     <AppLogo class="justify-center" />
     <LoginForm />
   </div>
