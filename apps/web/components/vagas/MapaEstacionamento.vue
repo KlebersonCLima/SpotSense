@@ -9,7 +9,8 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{ toggle: [spot: Vaga] }>()
 
-const SLOT_WIDTH = 64
+const LARGURA_VAGA_CELULAR = 56
+const LARGURA_VAGA = 64
 const container = ref<HTMLElement | null>(null)
 const perRow = ref(10)
 
@@ -19,7 +20,8 @@ onMounted(() => {
   if (!container.value) return
   observer = new ResizeObserver(([entry]) => {
     if (!entry) return
-    perRow.value = Math.min(14, Math.max(4, Math.floor((entry.contentRect.width - 32) / SLOT_WIDTH)))
+    const largura = window.matchMedia('(min-width: 640px)').matches ? LARGURA_VAGA : LARGURA_VAGA_CELULAR
+    perRow.value = Math.min(14, Math.max(4, Math.floor((entry.contentRect.width - 24) / largura)))
   })
   observer.observe(container.value)
 })
@@ -75,13 +77,13 @@ const laneStyle = {
             <div class="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2" :style="laneStyle" />
             <span
               v-if="blockIndex === 0"
-              class="absolute -left-1 top-1/2 -translate-y-1/2 rounded bg-[var(--ss-neon)] px-1.5 py-0.5 text-[9px] font-bold tracking-widest text-[var(--ss-black)]"
+              class="absolute -left-1 top-1/2 -translate-y-1/2 rounded bg-[var(--ss-neon)] px-1.5 py-0.5 text-[10px] font-bold tracking-widest text-[var(--ss-black)]"
             >
               ENTRADA
             </span>
             <span
               v-if="blockIndex === blocks.length - 1"
-              class="absolute top-1/2 -translate-y-1/2 rounded border border-white/30 bg-[#161616] px-1.5 py-0.5 text-[9px] font-bold tracking-widest text-white/70"
+              class="absolute top-1/2 -translate-y-1/2 rounded border border-white/30 bg-[#161616] px-1.5 py-0.5 text-[10px] font-bold tracking-widest text-white/80"
               :class="blockIndex % 2 === 0 ? '-right-1' : '-left-1'"
             >
               SAÍDA

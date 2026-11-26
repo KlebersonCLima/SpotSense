@@ -41,16 +41,41 @@ const {
   removeSpot,
 } = useVagas(parkingLotId, {
   // Nova mudança: atualiza o feed e o "visto há…" dos sensores
-  onRealtimeChange: () => {
+  onRealtimeChange: (mudanca) => {
     refreshHistory()
     refreshDevices()
+    if (mudanca.mudouSituacao && mudanca.fisica && aba.value !== 'activity') novidades.value++
   },
 })
 
-const tabs = [
-  { label: 'Mapa ao vivo', icon: 'i-lucide-map', slot: 'map' as const },
-  { label: 'Gerenciar vagas', icon: 'i-lucide-sliders-horizontal', slot: 'manage' as const },
-]
+// Em telas grandes a atividade fica ao lado do mapa; no celular ela vira uma aba própria.
+const telaGrande = ref(false)
+onMounted(() => {
+  const consulta = window.matchMedia('(min-width: 1280px)')
+  telaGrande.value = consulta.matches
+  consulta.addEventListener('change', evento => (telaGrande.value = evento.matches))
+})
+
+const aba = ref('map')
+const novidades = ref(0) // mudanças do sensor ainda não vistas na aba Atividade
+
+const tabs = computed(() => [
+  { label: 'Mapa', icon: 'i-lucide-map', slot: 'map' as const, value: 'map' },
+  ...(telaGrande.value
+    ? []
+    : [{
+        label: 'Atividade',
+        icon: 'i-lucide-activity',
+        slot: 'activity' as const,
+        value: 'activity',
+        badge: novidades.value > 0 ? { label: String(novidades.value), color: 'primary' as const, 'aria-label': `${novidades.value} novas` } : undefined,
+      }]),
+  { label: 'Gerenciar', icon: 'i-lucide-sliders-horizontal', slot: 'manage' as const, value: 'manage' },
+])
+
+watch(aba, (atual) => {
+  if (atual === 'activity') novidades.value = 0
+})
 
 // Edição do estacionamento
 function openEdit() {
@@ -141,7 +166,7 @@ function openDevice(spot: Vaga) {
       <StatCard label="Vagas físicas" :value="stats.physical" icon="i-lucide-radio" hint="controladas por sensor" />
     </div>
 
-    <UTabs :items="tabs" variant="link" class="gap-4 sm:gap-6" :unmount-on-hide="false" :ui="{ list: 'w-full sm:w-auto', trigger: 'flex-1 sm:flex-none' }">
+    <UTabs v-model="aba" :items="tabs" variant="link" class="gap-4 sm:gap-6" :unmount-on-hide="false" :ui="{ list: 'w-full sm:w-auto', trigger: 'flex-1 px-2 sm:flex-none sm:px-3', leadingIcon: 'hidden sm:inline-block' }">
       <template #map>
         <EmptyState
           v-if="!spots.length"
@@ -150,8 +175,12 @@ function openDevice(spot: Vaga) {
         />
         <div v-else class="grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
           <MapaEstacionamento :spots="spots" :devices="devices" :recently-changed="recentlyChanged" @toggle="toggleStatus" />
-          <AtividadeVagas :entries="history" />
+          <AtividadeVagas v-if="telaGrande" :entries="history" />
         </div>
+      </template>
+
+      <template #activity>
+        <AtividadeVagas :entries="history" />
       </template>
 
       <template #manage>

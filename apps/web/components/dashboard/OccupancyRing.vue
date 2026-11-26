@@ -29,7 +29,7 @@ const offset = computed(() => CIRCUMFERENCE * (1 - Math.min(100, Math.max(0, pro
     <div class="absolute inset-0 grid place-items-center text-center">
       <div>
         <p class="text-2xl font-semibold tabular-nums sm:text-3xl">{{ value }}%</p>
-        <p class="text-[10px] text-[var(--ss-text-muted)] sm:text-xs">ocupação</p>
+        <p class="text-xs text-[var(--ss-text-muted)]">ocupação</p>
       </div>
     </div>
   </div>

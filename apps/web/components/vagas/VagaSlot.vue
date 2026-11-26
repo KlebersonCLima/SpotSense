@@ -33,7 +33,7 @@ const tooltip = computed(() => {
   <UTooltip :text="tooltip" :delay-duration="150">
     <button
       type="button"
-      class="spot relative h-24 w-16 shrink-0 border-white/40 outline-none transition-colors first:border-l-2 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-[var(--ss-neon)]"
+      class="spot relative h-24 w-14 shrink-0 sm:w-16 border-white/40 outline-none transition-colors first:border-l-2 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-[var(--ss-neon)]"
       :class="[
         side === 'top' ? 'border-r-2 border-t-2' : 'border-b-2 border-r-2',
         isPhysical ? 'cursor-help' : 'cursor-pointer hover:bg-white/5',
@@ -60,7 +60,7 @@ const tooltip = computed(() => {
 
       <!-- número pintado no chão, do lado do corredor -->
       <span
-        class="absolute left-1/2 -translate-x-1/2 font-mono text-[11px] font-semibold tracking-wider text-white/55"
+        class="absolute left-1/2 -translate-x-1/2 font-mono text-xs font-semibold tracking-wider text-white/70"
         :class="side === 'top' ? 'bottom-1' : 'top-1'"
       >
         {{ label }}
@@ -78,7 +78,7 @@ const tooltip = computed(() => {
 
       <span
         v-if="!isOccupied"
-        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[9px] font-bold tracking-[0.2em] text-[var(--ss-neon)]"
+        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] font-bold tracking-[0.15em] text-[var(--ss-neon)]"
       >
         LIVRE
       </span>

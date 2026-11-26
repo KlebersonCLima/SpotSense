@@ -15,6 +15,7 @@ const { user, signOut } = useAuth()
         icon="i-lucide-log-out"
         color="neutral"
         variant="ghost"
+        size="lg"
         aria-label="Sair"
         title="Sair"
         @click="signOut"

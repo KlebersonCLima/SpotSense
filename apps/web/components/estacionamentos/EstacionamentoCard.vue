@@ -41,7 +41,7 @@ const menuItems = computed<DropdownMenuItem[][]>(() => [
 
 <template>
   <article
-    class="surface group relative flex flex-col gap-4 rounded-[var(--ss-radius-lg)] p-4 transition-colors hover:border-[var(--ss-neon)]/40 sm:p-5"
+    class="surface group relative flex flex-col gap-3 rounded-[var(--ss-radius-lg)] p-4 transition-colors hover:border-[var(--ss-neon)]/40 sm:p-5"
     :class="!lot.ativo && 'opacity-60'"
   >
     <header class="flex items-start justify-between gap-3">
@@ -77,7 +77,7 @@ const menuItems = computed<DropdownMenuItem[][]>(() => [
       </UDropdownMenu>
     </header>
 
-    <div class="flex flex-wrap gap-1" aria-hidden="true">
+    <div class="hidden flex-wrap gap-1 sm:flex" aria-hidden="true">
       <span
         v-for="spot in dots"
         :key="spot.id"

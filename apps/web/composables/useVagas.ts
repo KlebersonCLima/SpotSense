@@ -3,7 +3,14 @@ import type { Vaga, TipoVaga } from '@spotsense/shared'
 const FLASH_DURATION_MS = 1600
 
 /** Vagas de um estacionamento com atualização em tempo real e ações. */
-export function useVagas(parkingLotId: string, options: { onRealtimeChange?: () => void } = {}) {
+export interface MudancaTempoReal {
+  /** A situação (livre/ocupada) mudou. */
+  mudouSituacao: boolean
+  /** A vaga é física: a mudança veio do sensor. */
+  fisica: boolean
+}
+
+export function useVagas(parkingLotId: string, options: { onRealtimeChange?: (mudanca: MudancaTempoReal) => void } = {}) {
   const { spots: service } = useServices()
   const toast = useToast()
 
@@ -12,6 +19,18 @@ export function useVagas(parkingLotId: string, options: { onRealtimeChange?: () 
     () => service.list(parkingLotId),
     { default: () => [] as Vaga[] },
   )
+
+  /** Notificação a cada mudança do sensor (o usuário não precisa estar olhando o mapa). */
+  function avisarMudancaDoSensor(spot: Vaga) {
+    const ocupada = spot.situacao === 'ocupada'
+    toast.add({
+      title: `Vaga ${String(spot.numero).padStart(2, '0')} ficou ${ocupada ? 'ocupada' : 'disponível'}`,
+      description: 'Detectado pelo sensor IoT',
+      icon: 'i-lucide-radio',
+      color: ocupada ? 'neutral' : 'primary',
+      duration: 5000,
+    })
+  }
 
   /** IDs das vagas que mudaram há pouco (para animar no mapa). */
   const recentlyChanged = ref<Record<string, true>>({})
@@ -33,15 +52,19 @@ export function useVagas(parkingLotId: string, options: { onRealtimeChange?: () 
   useVagasRealtime({
     parkingLotId,
     onChange: (payload) => {
+      let mudanca: MudancaTempoReal = { mudouSituacao: false, fisica: false }
       if (payload.eventType === 'DELETE') {
         spots.value = spots.value.filter(spot => spot.id !== payload.old.id)
       }
       else {
         const previous = spots.value.find(spot => spot.id === payload.new.id)
         upsert(payload.new)
-        if (previous && previous.situacao !== payload.new.situacao) flash(payload.new.id)
+        const mudouSituacao = Boolean(previous) && previous!.situacao !== payload.new.situacao
+        if (mudouSituacao) flash(payload.new.id)
+        mudanca = { mudouSituacao, fisica: payload.new.tipo === 'fisica' }
+        if (mudanca.mudouSituacao && mudanca.fisica) avisarMudancaDoSensor(payload.new)
       }
-      options.onRealtimeChange?.()
+      options.onRealtimeChange?.(mudanca)
     },
   })
 

@@ -23,7 +23,7 @@ const itens = mainNavigation.map(item => ({
       <li v-for="item in itens" :key="item.to">
         <NuxtLink
           :to="item.to"
-          class="flex h-14 flex-col items-center justify-center gap-1 text-xs font-medium transition-colors"
+          class="flex h-14 flex-col items-center justify-center gap-1 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ss-neon)]"
           :class="ativo(item.to) ? 'text-[var(--ss-neon)]' : 'text-[var(--ss-text-muted)]'"
           :aria-current="ativo(item.to) ? 'page' : undefined"
         >
