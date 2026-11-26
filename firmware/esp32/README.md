@@ -15,6 +15,7 @@ python -m platformio device monitor     # monitor serial (115200)
 
 Copie `include/secrets.example.h` para `include/secrets.h` (ignorado pelo git) e preencha:
 `WIFI_SSID`, `WIFI_SENHA`, `URL_FUNCAO`, `DISPOSITIVO_ID`, `DISPOSITIVO_TOKEN`.
+Opcional: `WIFI_SSID_2` e `WIFI_SENHA_2` (rede reserva, ex.: hotspot do celular).
 
 > Nunca coloque a `service_role` key do Supabase no firmware.
 

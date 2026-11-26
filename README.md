@@ -2,182 +2,93 @@
 
 # SpotSense
 
-**Plataforma inteligente de gerenciamento de estacionamentos com integração IoT.**
+**Estacionamento inteligente: um sensor real mostra, em tempo real, se a vaga está livre ou ocupada.**
 
-Nuxt 3 · TypeScript · Nuxt UI · Tailwind CSS · Supabase · ESP32
+Nuxt 3 · Supabase · ESP32 · HC-SR04
 
 </div>
 
 ---
 
-## Sobre
+## O que é
 
-O SpotSense permite cadastrar estacionamentos, gerenciar suas vagas e acompanhar **em tempo real** quais estão ocupadas ou disponíveis.
+Uma plataforma web para cadastrar estacionamentos e acompanhar suas vagas ao vivo.
+Existem dois tipos de vaga:
 
-O diferencial é combinar dois tipos de vaga:
-
-| Tipo | Quem controla o estado | Uso |
+| Tipo | Quem muda o estado | Exemplo |
 | --- | --- | --- |
-| **Simulada** | O usuário, pela interface | Representa as demais vagas na demonstração |
-| **Física** | Somente o sensor + ESP32 | Vaga real da maquete, atualizada automaticamente |
+| **Simulada** | O usuário, clicando na tela | As vagas "de mentira" da demonstração |
+| **Física** | Somente o sensor (ESP32) | A vaga real da maquete |
 
-> Uma vaga física **nunca** pode ter o estado alterado manualmente pela interface.
+> Vaga física **nunca** muda pela tela. Isso é garantido no banco de dados, não só no visual.
 
-O projeto é acadêmico e será apresentado com uma maquete física de estacionamento contendo uma vaga real monitorada por sensor e ESP32.
-
-## Arquitetura
+## Como funciona (em 1 minuto)
 
 ```
-Sensor ─▶ ESP32 ─HTTP─▶ Supabase Edge Function ─▶ PostgreSQL ─Realtime─▶ Nuxt (dashboard)
+Sensor ──▶ ESP32 ──Wi-Fi──▶ Edge Function ──▶ Banco ──Realtime──▶ Site
+mede a      decide:          confere o         grava a    avisa      o mapa muda
+distância   livre/ocupada    token             situação   o site     sozinho
 ```
 
-1. O sensor detecta presença ou ausência de veículo.
-2. O ESP32 envia o estado via HTTP para uma **Edge Function**, autenticando-se com um token próprio.
-3. A função valida o dispositivo e a vaga e atualiza o banco.
-4. O **Supabase Realtime** propaga a mudança e a interface atualiza na hora.
+1. O **sensor ultrassônico** mede a distância até o chão da vaga.
+2. O **ESP32** compara com a vaga vazia: se algo chegou perto, está **ocupada**.
+3. Quando o estado muda, ele envia `{"situacao":"ocupada"}` + um token ao servidor.
+4. O servidor valida o token, grava no banco, e o **Realtime** atualiza o site na hora.
 
-Detalhes em [docs/arquitetura.md](docs/arquitetura.md).
+## Dois modos de uso
 
-## Estrutura do monorepo
+| | **Nuvem** (apresentação) | **Local** (sem internet, plano B) |
+| --- | --- | --- |
+| Site | GitHub Pages | `pnpm dev` no notebook |
+| Banco e função | Supabase na nuvem | Supabase no Docker |
+| ESP32 envia para | `https://<projeto>.supabase.co/...` | `http://<IP do notebook>:54321/...` |
+
+Site publicado: https://klebersonclima.github.io/SpotSense/
+
+## Rodar localmente
+
+Requisitos: Node 22+, pnpm 11+, Docker.
+
+```bash
+pnpm install
+pnpm db:start                                  # sobe o Supabase local
+cp apps/web/.env.example apps/web/.env         # preencha URL e chave (saem do comando acima)
+pnpm dev                                       # http://localhost:3000
+```
+
+Comandos úteis: `pnpm lint`, `pnpm typecheck`, `pnpm db:reset` (recria o banco), `pnpm db:types`.
+
+## Onde está cada coisa
 
 ```
 SpotSense/
-├── apps/
-│   └── web/                  # Aplicação Nuxt 3
-│       ├── assets/css/       # Design system (tokens, glassmorphism)
-│       ├── components/
-│       │   ├── layout/       # Sidebar, header, logo, alternância de tema
-│       │   ├── dashboard/    # Métricas e indicadores
-│       │   ├── estacionamentos/ # Estacionamentos
-│       │   ├── spots/        # Vagas
-│       │   └── common/       # Componentes genéricos
-│       ├── composables/      # Estado e lógica reativa
-│       ├── services/         # Acesso ao Supabase
-│       ├── layouts/          # default (dashboard) e auth
-│       ├── pages/            # Rotas
-│       ├── middleware/
-│       ├── plugins/
-│       ├── types/
-│       └── utils/
-├── packages/
-│   └── shared/               # Tipos de domínio + tipos gerados do banco
+├── apps/web/            Site (Nuxt 3): páginas, componentes, composables, services
+├── packages/shared/     Tipos compartilhados (inclui os gerados do banco)
 ├── supabase/
-│   ├── migrations/           # Schema SQL versionado
-│   ├── functions/            # Edge Functions (Deno)
-│   ├── config.toml
-│   └── seed.sql
+│   ├── migrations/      Tabelas, regras e segurança do banco (SQL)
+│   └── functions/       Edge Function que recebe os dados do ESP32
 ├── firmware/
-│   ├── comum/                # Lógica do sensor (usada pelas duas placas)
-│   ├── esp32/                # Firmware do ESP32 (PlatformIO)
-│   ├── uno/                  # Firmware do Arduino UNO (testes)
-│   └── ponte/                # Ponte serial UNO -> servidor
-├── docs/                     # Contexto e arquitetura
-├── CLAUDE.md                 # Regras do projeto para assistentes de IA
-└── package.json              # Scripts do workspace (pnpm)
+│   ├── comum/           Lógica do sensor (medir, filtrar, calibrar)
+│   ├── esp32/           Firmware definitivo (Wi-Fi + envio)
+│   ├── uno/ e ponte/    Protótipo com Arduino UNO (sem Wi-Fi)
+├── docs/                Documentação (veja abaixo)
+└── .github/workflows/   Publicação automática no GitHub Pages
 ```
-
-## Pré-requisitos
-
-- [Node.js](https://nodejs.org/) 22+ (veja `.nvmrc`)
-- [pnpm](https://pnpm.io/) 11+
-- [Docker](https://www.docker.com/) (para rodar o Supabase localmente)
-- [VS Code](https://code.visualstudio.com/) com a extensão [PlatformIO](https://platformio.org/) (para o firmware)
-
-## Como rodar
-
-```bash
-# 1. Instalar dependências
-pnpm install
-
-# 2. Subir o Supabase local (requer Docker)
-pnpm db:start
-
-# 3. Configurar variáveis de ambiente do app
-cp apps/web/.env.example apps/web/.env
-#   preencha NUXT_PUBLIC_SUPABASE_URL e NUXT_PUBLIC_SUPABASE_KEY
-#   (valores exibidos pelo comando anterior; use a chave anon/publishable)
-
-# 4. Iniciar o app
-pnpm dev
-```
-
-O app fica disponível em http://localhost:3000.
-
-## Scripts
-
-| Comando | Descrição |
-| --- | --- |
-| `pnpm dev` | Inicia o app Nuxt em modo desenvolvimento |
-| `pnpm build` | Gera o build de produção |
-| `pnpm preview` | Pré-visualiza o build |
-| `pnpm lint` | Executa o ESLint |
-| `pnpm typecheck` | Verifica os tipos TypeScript |
-| `pnpm db:start` / `db:stop` | Sobe/derruba o Supabase local |
-| `pnpm db:reset` | Recria o banco local aplicando migrations e seed |
-| `pnpm db:types` | Gera `packages/shared/src/database.types.ts` a partir do banco |
-| `pnpm functions:serve` | Executa as Edge Functions localmente |
-
-## Integração IoT
-
-1. No painel do estacionamento, aba **Gerenciar vagas**, defina a vaga como **Física (IoT)** e clique em **Vincular dispositivo**.
-2. Copie o endpoint, o identificador e o token. O token só é exibido uma vez.
-3. Rode as Edge Functions localmente com `pnpm functions:serve`.
-
-O ESP32 envia o estado da vaga assim (dá para simular com `curl`, sem a placa):
-
-```bash
-curl -X POST http://127.0.0.1:54321/functions/v1/iot-situacao-vaga \
-  -H "x-dispositivo-id: esp32-vaga-50" \
-  -H "x-dispositivo-token: <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"situacao":"ocupada"}'   # ou "livre"
-```
-
-| Resposta | Significado |
-| --- | --- |
-| `200 { ok, numero_vaga, situacao, alterada }` | Situação registrada |
-| `400 situacao_invalida` / `json_invalido` | Corpo inválido |
-| `401 nao_autorizado` / `credenciais_ausentes` | Identificador ou token incorretos |
-| `403 dispositivo_inativo` | Dispositivo desativado no painel |
-| `409 vaga_nao_fisica` | A vaga vinculada não é física |
-
-O mapa atualiza em tempo real e a mudança aparece no feed de atividade como **Sensor IoT**.
-
-## Firmware (ESP32)
-
-Como funciona, ligação do sensor e passo a passo: [firmware/README.md](firmware/README.md).
-
-## Banco de dados
-
-Padrão de nomenclatura: tabelas com prefixo **`tbl`** + nome em português, **sem `_`**.
-
-| Tabela | Descrição |
-| --- | --- |
-| `tblestacionamentos` | Estacionamentos cadastrados |
-| `tblvagas` | Vagas de cada estacionamento (tipo e status) |
-| `tbldispositivosiot` | Dispositivos ESP32 vinculados às vagas físicas |
-| `tblhistoricovagas` | Histórico de mudanças de estado das vagas |
-
-## Identidade visual
-
-| Cor | Uso |
-| --- | --- |
-| `#101010` | Preto profundo: fundo da aplicação |
-| `#FFFFFF` | Branco: textos |
-| `#C8FF00` | Verde-limão neon: destaques e elementos interativos |
-
-Interface em **Glassmorphism**, somente no **tema escuro**. Os tokens ficam em [apps/web/assets/css/main.css](apps/web/assets/css/main.css).
-
-## Segurança
-
-- O frontend usa apenas a chave **pública** (anon/publishable) do Supabase, protegida por RLS.
-- A `service_role` key existe somente no ambiente das Edge Functions, nunca no frontend nem no ESP32.
-- Cada dispositivo IoT tem um token próprio, e o banco armazena apenas o hash.
 
 ## Documentação
 
-- [Contexto do projeto](docs/contexto.md): objetivos, regras de negócio e identidade visual
-- [Arquitetura](docs/arquitetura.md): camadas, pastas e fluxo de dados
+| Documento | Para quê |
+| --- | --- |
+| [**Guia de apresentação**](docs/guia-de-apresentacao.md) | **Comece por aqui.** Explica tudo: lógica, conexões, decisões e como apresentar |
+| [Firmware](firmware/README.md) | Ligar o sensor, configurar e gravar o ESP32 |
+| [Arquitetura](docs/arquitetura.md) | Camadas e pastas do projeto |
+| [Contexto](docs/contexto.md) | Objetivos, regras de negócio e identidade visual |
+
+## Segurança
+
+- O site usa só a chave **pública** do Supabase, protegida por regras de acesso (RLS).
+- A chave administrativa (`service_role`) existe apenas dentro da Edge Function. Nunca no site nem no ESP32.
+- Cada dispositivo tem um token próprio; o banco guarda só o **hash**.
 
 ## Licença
 

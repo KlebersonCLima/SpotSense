@@ -5,6 +5,8 @@
 
 #define WIFI_SSID       "sua-rede"
 #define WIFI_SENHA      "sua-senha"
+#define WIFI_SSID_2     "rede-reserva"   // opcional: usada se a primeira nao estiver disponivel
+#define WIFI_SENHA_2    "senha-reserva"
 
 // Edge Function que recebe a situação da vaga.
 // Supabase local: use o IP do notebook na rede Wi-Fi (não "localhost"), ex.:

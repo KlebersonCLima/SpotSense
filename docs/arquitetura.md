@@ -24,8 +24,11 @@
 | `apps/web` | Aplicação Nuxt 3 (frontend) |
 | `packages/shared` | Tipos e constantes de domínio + tipos gerados do banco (`database.types.ts`) |
 | `supabase/migrations` | Schema SQL versionado (tabelas `tbl*`, índices, RLS, triggers) |
-| `supabase/functions` | Edge Functions (Deno). `_shared/` guarda o código comum entre funções |
-| `firmware/esp32` | Firmware PlatformIO do ESP32 |
+| `supabase/functions` | Edge Functions (Deno): `iot-situacao-vaga` |
+| `firmware/comum` | Lógica do sensor, usada pelo ESP32 e pelo UNO |
+| `firmware/esp32` | Firmware PlatformIO do ESP32 (Wi-Fi + envio) |
+| `firmware/uno` e `firmware/ponte` | Protótipo com Arduino UNO e a ponte serial até o servidor |
+| `.github/workflows` | Publicação do site no GitHub Pages |
 | `docs` | Documentação do projeto |
 
 ## Camadas do app Nuxt (`apps/web`)
@@ -35,15 +38,16 @@
 | `pages/` | Rotas. Só orquestram: buscam dados via composables e montam componentes |
 | `layouts/` | `default` (sidebar + header glass) e `auth` (telas de login) |
 | `components/layout/` | Estrutura da aplicação: `AppSidebar`, `AppHeader`, `AppLogo`, `ThemeToggle` |
-| `components/dashboard/` | Cards de métricas e indicadores de ocupação |
+| `components/dashboard/` | Indicador circular de ocupação |
 | `components/estacionamentos/` | Formulários, tabelas e cards de estacionamentos |
-| `components/vagas/` | Grade de vagas, card de vaga, badges de tipo e status |
+| `components/vagas/` | Mapa do estacionamento, vaga, gerenciador, atividade e modal de dispositivo |
+| `components/auth/` | Formulário de login |
 | `components/common/` | Componentes genéricos reutilizáveis (estados vazios, loaders etc.) |
-| `composables/` | Estado e lógica reativa (`useEstacionamentos`, `useSpots`, `useVagasRealtime`…) |
+| `composables/` | Estado e lógica reativa (`useEstacionamentos`, `useVagas`, `useVagasRealtime`…) |
 | `services/` | Acesso ao Supabase (queries puras e tipadas, sem estado de UI) |
 | `types/` | Tipos exclusivos do frontend (os de domínio ficam em `@spotsense/shared`) |
 | `utils/` | Funções puras e constantes (ex.: `navigation.ts`) |
-| `middleware/` | Middlewares de rota (a autenticação já vem do módulo `@nuxtjs/supabase`) |
+| `middleware/` | `autenticacao.global.ts`: no modo estático (GitHub Pages) manda quem não tem sessão para `/login`. No modo local a proteção vem do módulo `@nuxtjs/supabase` |
 | `plugins/` | Plugins Nuxt |
 | `assets/css/main.css` | Design system: tokens `--ss-*`, escala `neon` e utilitários `glass` |
 
@@ -57,3 +61,14 @@ Os componentes são registrados sem prefixo de pasta (`pathPrefix: false`), ent�
 - Tema único escuro: a classe `dark` é fixa no `<html>` (`nuxt.config.ts`) e o color-mode do Nuxt UI está desativado, então não há script de troca nem flash.
 - O Nuxt UI usa a escala `neon` como `primary`; botões e campos têm 6px de arredondamento (`--ui-radius`).
 - Utilitários Tailwind: `glass` (superfícies padrão) e `glass-strong` (modais e menus).
+
+## Dois modos de execução
+
+| | Nuvem | Local |
+| --- | --- | --- |
+| Site | Estático (`nuxt generate`) no GitHub Pages, base `/SpotSense/` | `pnpm dev` |
+| Banco e função | Supabase na nuvem | Supabase no Docker (`pnpm db:start`) |
+| Autenticação de rota | Middleware no cliente | Módulo `@nuxtjs/supabase` (servidor) |
+| ESP32 envia para | `https://<projeto>.supabase.co/functions/v1/...` | `http://<IP do notebook>:54321/functions/v1/...` |
+
+O modo estático é ligado pelas variáveis `NUXT_SSR=false` e `NUXT_APP_BASE_URL=/SpotSense/` (definidas no workflow). Sem elas, o app roda no modo local normal.

@@ -45,15 +45,27 @@ Serve qualquer par com a proporção 1:2 (ex.: 2,2 kΩ e 4,7 kΩ). Desligue o US
 ## Colocar o ESP32 para funcionar
 
 1. **Ligue o sensor** como na tabela acima. Aponte-o para a vaga, a 10 a 30 cm da superfície. Ele precisa estar parado.
-2. **Suba o sistema:** Docker aberto, `pnpm db:start`, `pnpm dev`.
+2. **Escolha o destino** (veja a tabela abaixo) e tenha o servidor pronto.
 3. **Registre o dispositivo** no app (vaga **física** → dispositivo IoT). Copie o **identificador** e o **token**: o token aparece uma única vez.
-4. **Descubra o IP do notebook** (`ipconfig`, linha "Adaptador de Rede sem Fio Wi-Fi"). O ESP32 não enxerga `localhost`: ele precisa do IP. O notebook e o ESP32 têm que estar **na mesma rede Wi-Fi**.
-5. **Configure o ESP32:** em `esp32/include/`, copie `secrets.example.h` para `secrets.h` e preencha Wi-Fi, a URL (`http://<IP>:54321/functions/v1/iot-situacao-vaga`), o identificador e o token.
-6. **Grave:** conecte o ESP32 por USB e, em `firmware/esp32`, rode `python -m platformio run -t upload`.
-7. **Acompanhe:** `python -m platformio device monitor` (115200). Deve aparecer o IP do Wi-Fi e `POST ... -> HTTP 200`.
-8. **Ligue a placa com a vaga vazia**: é nesse momento que ela mede o fundo.
+4. **Configure o ESP32:** em `esp32/include/`, copie `secrets.example.h` para `secrets.h` e preencha Wi-Fi, URL, identificador e token.
+5. **Grave:** conecte o ESP32 por USB e, em `firmware/esp32`, rode `python -m platformio run -t upload`.
+6. **Acompanhe:** `python -m platformio device monitor` (115200). Deve aparecer o Wi-Fi e `POST ... -> HTTP 200`.
+7. **Ligue a placa com a vaga vazia**: é nesse momento que ela mede o fundo.
 
-Se o monitor mostrar `HTTP 401`: identificador ou token errado. Se não aparecer nada de rede, confira se o Windows está bloqueando a porta 54321 (Firewall).
+### Destino: nuvem ou notebook
+
+| Modo | `URL_FUNCAO` | Servidor pronto quando |
+|---|---|---|
+| **Nuvem** (padrão) | `https://<projeto>.supabase.co/functions/v1/iot-situacao-vaga` | Supabase na nuvem com a função publicada |
+| **Local** (sem internet) | `http://<IP do notebook>:54321/functions/v1/iot-situacao-vaga` | Docker aberto + `pnpm db:start`; notebook e ESP32 na mesma rede |
+
+No modo local, descubra o IP com `ipconfig` (o ESP32 não enxerga `localhost`). O identificador e o token são **diferentes** em cada banco: o do local não vale na nuvem e vice-versa.
+
+### Wi-Fi com reserva
+
+O `secrets.h` aceita duas redes: `WIFI_SSID`/`WIFI_SENHA` e, opcionalmente, `WIFI_SSID_2`/`WIFI_SENHA_2` (ex.: o hotspot do celular). A placa conecta na que estiver ao alcance. Só funciona em **2,4 GHz** e em redes sem login por navegador.
+
+Se o monitor mostrar `HTTP 401`: identificador ou token errado para aquele banco. Se não aparecer nada de rede no modo local, confira o Firewall do Windows (porta 54321).
 
 ## Como ela decide (resumo do código)
 

@@ -3,6 +3,7 @@
 #include <SensorVaga.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
+#include <WiFiMulti.h>
 
 #include "secrets.h"
 
@@ -29,6 +30,7 @@ const unsigned long INTERVALO_NOVA_TENTATIVA_MS = 3000;
 const unsigned long TEMPO_LIMITE_WIFI_MS = 15000;
 
 SensorVaga sensor(PINO_GATILHO, PINO_ECO);
+WiFiMulti wifiMulti;
 bool envioPendente = true;  // envia a situação inicial assim que houver rede
 unsigned long ultimoEnvioMs = 0;
 unsigned long ultimaTentativaMs = 0;
@@ -37,16 +39,21 @@ void conectarWifi() {
     if (WiFi.status() == WL_CONNECTED) {
         return;
     }
-    Serial.printf("Conectando ao Wi-Fi \"%s\"...\n", WIFI_SSID);
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(WIFI_SSID, WIFI_SENHA);
-
-    unsigned long inicio = millis();
-    while (WiFi.status() != WL_CONNECTED && millis() - inicio < TEMPO_LIMITE_WIFI_MS) {
-        delay(300);
+    static bool redesCadastradas = false;
+    if (!redesCadastradas) {
+        WiFi.mode(WIFI_STA);
+        wifiMulti.addAP(WIFI_SSID, WIFI_SENHA);
+#ifdef WIFI_SSID_2
+        wifiMulti.addAP(WIFI_SSID_2, WIFI_SENHA_2);
+#endif
+        redesCadastradas = true;
     }
-    if (WiFi.status() == WL_CONNECTED) {
-        Serial.print("Wi-Fi conectado. IP: ");
+    Serial.println("Procurando Wi-Fi conhecido...");
+
+    // Conecta na primeira rede cadastrada que estiver ao alcance (se houver
+    // as duas, escolhe a de sinal mais forte).
+    if (wifiMulti.run(TEMPO_LIMITE_WIFI_MS) == WL_CONNECTED) {
+        Serial.printf("Wi-Fi conectado em \"%s\". IP: ", WiFi.SSID().c_str());
         Serial.println(WiFi.localIP());
     } else {
         Serial.println("Wi-Fi indisponível; nova tentativa em breve.");
